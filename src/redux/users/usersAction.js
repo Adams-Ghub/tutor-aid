@@ -1,17 +1,16 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import {
   createUserWithEmailAndPassword,
-  signInWithEmailAndPassword,getAuth, signOut
+  signInWithEmailAndPassword,
+  getAuth,
+  signOut,
 } from 'firebase/auth';
-import { setDoc, getDoc, doc, getDocs,collection  } from 'firebase/firestore';
+import { setDoc, getDoc, doc, getDocs, collection } from 'firebase/firestore';
 import { auth, db } from '../../firebase/firebase.js';
-
 
 export const RegisterUser = createAsyncThunk(
   'user/register',
-  async (
-    { email, password, role, name, registration },thunkAPI
-  ) => {
+  async ({ email, password, role, fullName }, thunkAPI) => {
     try {
       let user = {};
       await createUserWithEmailAndPassword(auth, email, password).then(
@@ -22,17 +21,16 @@ export const RegisterUser = createAsyncThunk(
           setDoc(doc(db, 'users', user.uid), {
             id: user.uid,
             role,
-            registration: role == 'customer' ? 'none' : registration,
-            name,
+            fullName,
             photo: 'unknown',
-            phone:'',
-            pharmacy: role == 'customer' ? 'none' : 'unknown',
+            phone: '',
+            profile: {},
           });
         }
       );
       return user;
     } catch (error) {
-     thunkAPI.rejectWithValue(error);
+      thunkAPI.rejectWithValue(error);
     }
   }
 );
@@ -47,7 +45,7 @@ export const UserLogin = createAsyncThunk(
           // Signed in
           const user = userCredential.user;
 
-          loggedUser =  {email:user.auth.email,id:user.uid};
+          loggedUser = { email: user.email, id: user.uid };
           const docRef = doc(db, 'users', user.uid);
           const docSnap = await getDoc(docRef);
           console.log('data:', docSnap.data());
@@ -59,34 +57,33 @@ export const UserLogin = createAsyncThunk(
           }
         }
       );
+      console.log('user', loggedUser);
       return loggedUser;
     } catch (error) {
-      const errorMessage = error.message;
-      return rejectWithValue(errorMessage);
+      alert(error.message);
+      return rejectWithValue(error.message); // Provide a more detailed error message
     }
   }
 );
 
-export const Logout = createAsyncThunk(
-  'user/Logout',
-  async (_, thunkAPI) => {
-    try {
-      const auth = getAuth();
-      signOut(auth).then(() => {
-        // Sign-out successful.
-      })
-    } catch (error) {
-      throw error;
-    }
+export const Logout = createAsyncThunk('user/Logout', async (_, thunkAPI) => {
+  try {
+    const auth = getAuth();
+    signOut(auth).then(() => {
+      // Sign-out successful.
+    });
+  } catch (error) {
+    alert(error.message);
+    throw error;
   }
-);
+});
 
 export const GetAllUsers = createAsyncThunk(
   'user/getUsers',
   async (_, thunkAPI) => {
     try {
       const userData = [];
-      const querySnapshot = await getDocs(collection(db, "users"));
+      const querySnapshot = await getDocs(collection(db, 'users'));
       querySnapshot.forEach((doc) => {
         // doc.data() is never undefined for query doc snapshots
         console.log(doc.id, ' => ', doc.data());

@@ -1,10 +1,10 @@
 import React from 'react'
 import {Text,TouchableOpacity,} from 'react-native'
 
-const Registrations=()=> {
+const AdminProfile=()=> {
   return (
-    <Text>Registrations page</Text>
+    <Text>Admin profile page</Text>
   )
 }
 
-export default Registrations
+export default AdminProfile

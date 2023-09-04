@@ -1,13 +1,13 @@
 // userSlice.js
 import { createSlice } from '@reduxjs/toolkit';
-import { GetAllUsers, RegisterUser, UserLogin, Logout } from './usersActions';
+import { GetAllUsers, RegisterUser, UserLogin, Logout } from './usersAction';
 
 const initialState = {
-  allUsers:[],
-  user:null,
+  user:[],
   currentUser: null,
   error: null,
-  loading: false
+  loading: false,
+  logged:false
 };
 
 const usersSlice = createSlice({
@@ -37,6 +37,7 @@ const usersSlice = createSlice({
       })
       .addCase(UserLogin.fulfilled, (state, action) => {
         state.user = action.payload;
+        state.logged=true
       })
       .addCase(UserLogin.rejected, (state, action) => {
         state.error = action.payload;
@@ -56,7 +57,8 @@ const usersSlice = createSlice({
         state.error = null;
       })
       .addCase(Logout.fulfilled, (state) => {
-        state.user = null;
+        state.user = [];
+        state.logged=false
       })
       .addCase(Logout.rejected, (state, action) => {
         state.error = action.payload;

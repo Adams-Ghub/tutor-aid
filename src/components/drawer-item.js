@@ -27,7 +27,7 @@ const styles = StyleSheet.create({
   },
   Profile: {
     fontSize: 18,
-    color: "#000",
+    color: "#fff",
     alignSelf:'center'
   },
 });

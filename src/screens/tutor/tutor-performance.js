@@ -1,10 +1,10 @@
 import React from 'react'
 import {Text,TouchableOpacity,} from 'react-native'
 
-const Registrations=()=> {
+const TutorPerformance=()=> {
   return (
-    <Text>Registrations page</Text>
+    <Text>Performance page</Text>
   )
 }
 
-export default Registrations
+export default TutorPerformance
