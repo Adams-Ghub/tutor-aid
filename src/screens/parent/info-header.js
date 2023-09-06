@@ -1,8 +1,8 @@
 import React from 'react';
-import { View, Text, StyleSheet, Image,TouchableOpacity } from 'react-native';
-import profileImage from '../../assets/profile.png';
+import { View, Text, TouchableOpacity, Image,StyleSheet } from 'react-native';
+import profileImage from '../../../assets/profile.png';
 
- const TutorComponent=({ name, profile, location,onPressDetails })=> {
+function InfoHeader({name, profile, location,}) {
   return (
     <View style={styles.mainContainer}>
       <View style={styles.imageContainer}>
@@ -17,11 +17,6 @@ import profileImage from '../../assets/profile.png';
           <Text style={styles.contactText}>{profile.contact}</Text>
           <Text style={styles.locationText}>{location}</Text>
         </View>
-        <View>
-          <TouchableOpacity onPress={() => onPressDetails('TutorDetails')}>
-            <Text style={styles.detailsLinkText}>details</Text>
-          </TouchableOpacity>
-        </View>
       </View>
     </View>
   );
@@ -35,14 +30,8 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     padding: 10,
     marginVertical: 5,
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-    elevation: 5,
+    
+  
   },
   feedbackProfileImage: {
     width: 70,
@@ -93,4 +82,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default TutorComponent
+export default InfoHeader;

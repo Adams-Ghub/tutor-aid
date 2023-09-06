@@ -34,19 +34,19 @@ const styles = StyleSheet.create({
   principalContainer: {
     flex: 1,
     flexDirection: 'column',
-    gap: 10,
     marginVertical: 5,
-    padding: 7,
+    padding: 5,
     justifyContent: 'flex-start',
     alignItems: 'flex-start',
     backgroundColor: '#ccc',
     borderRadius: 5,
+    
   },
 
   parentLocDistanceContainer: {
-    flex: 1,
     flexDirection: 'row',
     justifyContent: 'space-between',
+    
   },
   parentText: {
     fontSize: 22,

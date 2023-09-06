@@ -1,10 +1,12 @@
-import React from 'react'
-import {Text,TouchableOpacity,} from 'react-native'
+import React from 'react';
+import { View, TouchableOpacity } from 'react-native';
 
-const TutorPerformance=()=> {
+const TutorPerformance = () => {
   return (
-    <Text>Performance page</Text>
-  )
-}
+    <View>
+      <Text>performance </Text>
+    </View>
+  );
+};
 
-export default TutorPerformance
+export default TutorPerformance;
