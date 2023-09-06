@@ -44,7 +44,7 @@ export default function Login({ navigation }) {
         navigation.navigate('AdminWelcome');
       }
     }
-  }, [logged,dispatch]);
+  }, [logged]);
 
   return (
     <View style={styles.container}>

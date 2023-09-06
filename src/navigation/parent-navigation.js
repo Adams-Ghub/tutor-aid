@@ -4,8 +4,10 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { DrawerActions } from '@react-navigation/native';
 import DrawerItem from '../components/drawer-item';
 import Performance from '../screens/parent/parent-performance';
-import Tutors from '../screens/parent/tutors';
+import ParentTutors from '../screens/parent/parent-tutors';
 import Profile from '../screens/parent/parent-profile';
+import TutorDetails from '../screens/parent/tutor-details';
+import RequestForm from '../components/request-form';
 import { TouchableOpacity, View, Text, Image } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 import { Logout } from '../redux/users/usersAction.js';
@@ -18,23 +20,29 @@ import {
 import profileImg from '../../assets/profile.png';
 
 const Stack = createNativeStackNavigator();
-const PrescriptionNavigatior = () => {
+
+const AllTutorSubNavigation = () => {
   return (
     <Stack.Navigator
       screenOptions={{
         header: () => null,
       }}
-      initialRouteName="PrescriptionScreen"
+      initialRouteName="PTutors"
     >
       <Stack.Screen
-        name="PrescriptionScreen"
+        name="PTutors"
         // options={{ header: () => {} }}
-        component={PrescriptionScreen}
+        component={ParentTutors}
       />
       <Stack.Screen
-        name="AddPrescription"
+        name="TutorDetails"
         // options={{ header: () => {} }}
-        component={AddPrescriptionScreen}
+        component={TutorDetails}
+      />
+      <Stack.Screen
+        name="RequestForm"
+        // options={{ header: () => {} }}
+        component={RequestForm}
       />
     </Stack.Navigator>
   );
@@ -54,8 +62,7 @@ function ParentNavigation({ navigation }) {
         navigation.navigate('Login');
       }
     },
-    [logged],
-    dispatch
+    [logged,dispatch]
   );
 
   const displayName = logged ? user.details.fullName.split(' ') : 'unknown';
@@ -132,8 +139,8 @@ function ParentNavigation({ navigation }) {
       }}
     >
       <Drawer.Screen
-        name="tutors"
-        component={Tutors}
+        name="Tutors"
+        component={AllTutorSubNavigation}
         options={{
           drawerLabel: () => {
             return (

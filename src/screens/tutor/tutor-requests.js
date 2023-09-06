@@ -66,8 +66,8 @@ const styles=StyleSheet.create({
     marginVertical: 10,
     marginHorizontal: 10,
     justifyContent: 'flex-start',
-    alignItems: 'stretch',
-    
+    alignItems:'center',
+    width: '100%',   
   }
 })
 
