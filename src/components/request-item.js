@@ -6,10 +6,8 @@ function RequestItem({ parent, location, distance, students }) {
     <View style={styles.principalContainer}>
       <View style={styles.parentLocDistanceContainer}>
         <Text style={styles.parentText}>{parent} </Text>
-        <Text style={styles.locationDistanceText}>
-          {location + ' '}
-          {distance}
-        </Text>
+        <Text style={styles.locationDistanceText}>{location + ' '}</Text>
+        <Text style={styles.locationDistanceText}>{distance+' km'}</Text>
       </View>
       <View style={styles.studentsDetailsContainer}>
         <Text style={styles.studentsQtyClassTexts}>
@@ -23,7 +21,7 @@ function RequestItem({ parent, location, distance, students }) {
       </View>
       <View style={styles.dateContainer}>
         <TouchableOpacity>
-          <Text style={styles.dateText}>details</Text>
+          <Text style={styles.detailsText}>details</Text>
         </TouchableOpacity>
       </View>
     </View>
@@ -34,24 +32,27 @@ const styles = StyleSheet.create({
   principalContainer: {
     flex: 1,
     flexDirection: 'column',
-    marginVertical: 5,
-    padding: 5,
     justifyContent: 'flex-start',
     alignItems: 'flex-start',
     backgroundColor: '#ccc',
     borderRadius: 5,
-    
+    marginVertical: 5,
+    padding: 5,
+    width: '100%',
   },
 
   parentLocDistanceContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    
   },
+
   parentText: {
     fontSize: 22,
     fontWeight: 'bold',
+    width:250,
+    marginRight: '2%',
   },
+
   locationDistanceText: {
     alignSelf: 'flex-end',
   },
@@ -64,12 +65,17 @@ const styles = StyleSheet.create({
   studentsQtyClassTexts: {
     fontSize: 17,
     fontWeight: 'normal',
-    margin:0
+    margin: 0,
   },
   pharmacyText: {
     fontSize: 16,
     color: '#000',
   },
+  detailsText:{
+    color:'#3944bc',
+    fontSize: 16,
+    fontWeight:'600'
+  }
 });
 
 export default RequestItem;

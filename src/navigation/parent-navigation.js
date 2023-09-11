@@ -65,7 +65,7 @@ function ParentNavigation({ navigation }) {
     [logged,dispatch]
   );
 
-  const displayName = logged ? user.details.fullName.split(' ') : 'unknown';
+  const displayName = logged ? user.details.fullName.split(' ') : '';
 
   return (
     <Drawer.Navigator
@@ -111,6 +111,7 @@ function ParentNavigation({ navigation }) {
                   fontWeight: '600',
                   fontSize: 16,
                   marginRight: 15,
+                  width: 50,
                 }}
               >
                 {displayName[0]}
@@ -162,6 +163,30 @@ function ParentNavigation({ navigation }) {
           },
         }}
       />
+       <Drawer.Screen
+        name="Performance"
+        component={Performance}
+        options={{
+          drawerLabel: () => {
+            return (
+              <DrawerItem
+                icon={
+                  <EvilIcons
+                    name="chart"
+                    style={{}}
+                    size={16}
+                    color="#fff"
+                  />
+                }
+                title="Performance"
+              />
+            );
+          },
+          drawerItemStyle: {
+            backgroundColor: 'transparent',
+          },
+        }}
+      />
       <Drawer.Screen
         name="Profile"
         component={Profile}
@@ -186,30 +211,7 @@ function ParentNavigation({ navigation }) {
           },
         }}
       />
-      <Drawer.Screen
-        name="Performance"
-        component={Performance}
-        options={{
-          drawerLabel: () => {
-            return (
-              <DrawerItem
-                icon={
-                  <EvilIcons
-                    name="chart"
-                    style={{}}
-                    size={16}
-                    color="#fff"
-                  />
-                }
-                title="Performance"
-              />
-            );
-          },
-          drawerItemStyle: {
-            backgroundColor: 'transparent',
-          },
-        }}
-      />
+     
 
       {/* <Drawer.Screen name="AddPrescription" component={AddPrescriptionScreen} /> */}
     </Drawer.Navigator>

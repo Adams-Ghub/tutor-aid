@@ -3,7 +3,8 @@ import { createDrawerNavigator } from '@react-navigation/drawer';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { DrawerActions } from '@react-navigation/native';
 import DrawerItem from '../components/drawer-item';
-import Profile from '../screens/tutor/tutor-profile';
+import FormOne from '../screens/tutor/tutor-profile-one';
+import FormTwo from '../screens/tutor/tutor-profile-two';
 import Performance from '../screens/tutor/tutor-performance';
 import Requests from '../screens/tutor/tutor-requests';
 import { TouchableOpacity, View, Text, Image } from 'react-native';
@@ -13,28 +14,28 @@ import { Entypo, EvilIcons, FontAwesome5, AntDesign } from '@expo/vector-icons';
 import profileImg from '../../assets/profile.png';
 
 const Stack = createNativeStackNavigator();
-// const chatNavigation=()=> {
-//   return (
-//     <Stack.Navigator
-//       screenOptions={{
-//         header: () => null,
-//       }}
-//       initialRouteName="feedback-list"
+const TutorProfileNav=()=> {
+  return (
+    <Stack.Navigator
+      screenOptions={{
+        header: () => null,
+      }}
+      initialRouteName="FormOne"
 
-//     >
-//       <Stack.Screen
-//         name="feedback-list"
-//         // options={{ header: () => {} }}
-//         component={Feedback}
-//       />
-//       <Stack.Screen
-//         name="chat"
-//         // options={{ header: () => {} }}
-//         component={Chat}
-//       />
-//     </Stack.Navigator>
-//   );
-// }
+    >
+      <Stack.Screen
+        name="FormOne"
+        // options={{ header: () => {} }}
+        component={FormOne}
+      />
+      <Stack.Screen
+        name="FormTwo"
+        // options={{ header: () => {} }}
+        component={FormTwo}
+      />
+    </Stack.Navigator>
+  );
+}
 
 function TutorNavigation({ navigation }) {
   const Drawer = createDrawerNavigator();
@@ -101,6 +102,7 @@ function TutorNavigation({ navigation }) {
                   padding: 0,
                   fontWeight: '600',
                   fontSize: 16,
+                  width: 50,
                 }}
               >
                 {displayName[0]}
@@ -174,7 +176,7 @@ function TutorNavigation({ navigation }) {
       />
       <Drawer.Screen
         name="Profile"
-        component={Profile}
+        component={TutorProfileNav}
         options={{
           drawerLabel: () => {
             return (

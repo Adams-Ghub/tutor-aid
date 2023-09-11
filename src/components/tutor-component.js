@@ -1,8 +1,8 @@
 import React from 'react';
-import { View, Text, StyleSheet, Image,TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
 import profileImage from '../../assets/profile.png';
 
- const TutorComponent=({ name, profile, location,onPressDetails })=> {
+const TutorComponent = ({ name, profile, location,distance, onPressDetails }) => {
   return (
     <View style={styles.mainContainer}>
       <View style={styles.imageContainer}>
@@ -15,7 +15,10 @@ import profileImage from '../../assets/profile.png';
         </View>
         <View style={styles.contactLocationContainer}>
           <Text style={styles.contactText}>{profile.contact}</Text>
-          <Text style={styles.locationText}>{location}</Text>
+          <View style={styles.locationDistanceContainer}>
+            <Text style={styles.locationText}>{location}</Text>
+            <Text style={styles.locationText}>{distance+"km"}</Text>
+          </View>
         </View>
         <View>
           <TouchableOpacity onPress={() => onPressDetails('TutorDetails')}>
@@ -25,7 +28,7 @@ import profileImage from '../../assets/profile.png';
       </View>
     </View>
   );
-}
+};
 
 const styles = StyleSheet.create({
   mainContainer: {
@@ -86,11 +89,15 @@ const styles = StyleSheet.create({
   },
   detailsLinkText: {
     fontSize: 16,
-    color: '#007AFF',
+    color: '#3944bc',
     alignSelf: 'flex-end',
     fontWeight: '600',
     marginTop: 8,
   },
+  locationDistanceContainer:{
+    flexDirection:'row',
+    gap: 4,
+  }
 });
 
-export default TutorComponent
+export default TutorComponent;

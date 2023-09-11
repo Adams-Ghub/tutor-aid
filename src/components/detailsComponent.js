@@ -1,39 +1,3 @@
-// import React from 'react';
-// import { View,Text, TouchableOpacity, TextInput, Button,StyleSheet } from 'react-native';
-
-// function DetailsComponent() {
-//   return (
-//     <View style={styles.mainContainer}>
-//       <Text>name:{name}</Text>
-//       <Text>Education: {profile.education}</Text>
-//       <View>
-//         <Text>Experience: {profile.experience}</Text>
-//         <Text>Ratings: {ratings}</Text>
-//       </View>
-//       <View>
-//         <Text>Location: {location}{distance}</Text>
-//         <Text>: {ratings}</Text>
-//       </View>
-//       <View>
-//             <Text>resume link</Text>
-//       </View>
-//       <View>
-//         <TouchableOpacity>request</TouchableOpacity>
-//       </View>
-//     </View>
-//   );
-// }
-
-// const styles=StyleSheet.create({
-//     mainContainer:{
-//         flex: 1,
-//         flexDirection:'column',
-//         width:'100%',
-//     }
-// }
-// )
-// export default DetailsComponent;
-
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 

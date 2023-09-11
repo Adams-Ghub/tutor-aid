@@ -8,10 +8,15 @@ import {
   StyleSheet,
   Image,
 } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 
-function AdminProfile() {
+function TutorProfileOne() {
   const [image, setImage] = useState(null);
-
+  const [fullName, setFullName]=useState('Samuel Boadu')
+  const [email, setEmail]=useState('samg@gmail.com')
+  const [location, setLocation]=useState('Samuel Boadu')
+  const [phone, setPhone]=useState('+233 555 788590')
+  const navigation = useNavigation();
   const pickImage = async () => {
     // No permissions request is necessary for launching the image library
     let result = await ImagePicker.launchImageLibraryAsync({
@@ -29,6 +34,7 @@ function AdminProfile() {
   };
   return (
     <View style={styles.mainContainer}>
+      <Text style={styles.heading}>Teacher Profile</Text>
       <View style={styles.imageMajorContainer}>
         <TouchableOpacity
           onPress={pickImage}
@@ -56,7 +62,7 @@ function AdminProfile() {
               <Text style={styles.editButtonText}>edit</Text>
             </TouchableOpacity>
           </View>
-          <TextInput style={styles.allTextInput} />
+          <TextInput style={styles.allTextInput} value={fullName} />
         </View>
         <View style={styles.emailAndInputContainer}>
           <View style={styles.emailEditContainer}>
@@ -65,7 +71,7 @@ function AdminProfile() {
               <Text style={styles.editButtonText}>edit</Text>
             </TouchableOpacity>
           </View>
-          <TextInput style={styles.allTextInput} />
+          <TextInput style={styles.allTextInput} value={email} />
         </View>
 
         <View style={styles.phoneAndInputContainer}>
@@ -75,7 +81,7 @@ function AdminProfile() {
               <Text style={styles.editButtonText}>edit</Text>
             </TouchableOpacity>
           </View>
-          <TextInput style={styles.allTextInput} />
+          <TextInput style={styles.allTextInput} value={phone} />
         </View>
         <View style={styles.pharmacyAndInputContainer}>
           <View style={styles.pharmacyEditContainer}>
@@ -86,11 +92,12 @@ function AdminProfile() {
               <Text style={styles.editButtonText}>edit</Text>
             </TouchableOpacity>
           </View>
-          <TextInput style={styles.allTextInput} />
+          <TextInput style={styles.allTextInput} value={location}/>
         </View>
         <View style={styles.regNumberAndInputContainer}>
           <View style={styles.regNumberEditContainer}>
-          <View style={styles.coordinateLabelInputContainer}>
+            <View style={styles.coordinateContainer}>
+              <View style={styles.coordinateLabelInputContainer}>
                 <Text style={[styles.regNumberText, styles.labelText]}>
                   coordinates
                 </Text>
@@ -101,14 +108,18 @@ function AdminProfile() {
                   </TouchableOpacity>
                 </View>
               </View>
+            </View>
             <TouchableOpacity style={styles.editButton}>
               <Text style={styles.editButtonText}>edit</Text>
             </TouchableOpacity>
           </View>
         </View>
         <View>
-          <TouchableOpacity style={styles.updateButton}>
-            <Text style={styles.updateButtonText}>update</Text>
+          <TouchableOpacity
+            onPress={() => navigation.navigate('FormTwo')}
+            style={styles.nextBtn}
+          >
+            <Text style={styles.nextBtnText}>next</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -177,14 +188,6 @@ const styles = StyleSheet.create({
     fontSize: 14,
     height: 24,
   },
-  editButtonText: {
-    color: '#3944bc',
-    fontSize: 16,
-  },
-  labelText: {
-    fontSize: 18,
-    fontWeight: '700',
-  },
   codeTextInput: {
     borderStyle: 'solid',
     borderWidth: 1,
@@ -205,12 +208,26 @@ const styles = StyleSheet.create({
     color:'#fff', 
     
   },
+  heading: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    marginBottom: 10,
+  },
+  editButtonText: {
+    color: '#3944bc',
+    fontSize: 16,
+  },
+  labelText: {
+    fontSize: 18,
+    fontWeight: '700',
+  },
   usernameAndInputContainer: {
     marginBottom: 10,
   },
   emailAndInputContainer: {
     marginBottom: 10,
   },
+  
   pharmacyAndInputContainer: {
     marginBottom: 10,
   },
@@ -220,11 +237,14 @@ const styles = StyleSheet.create({
   regNumberAndInputContainer: {
     marginBottom: 10,
   },
-  updateButton: {
-    backgroundColor: '#3944bc',
-    paddingVertical: 8,
+  nextBtn: {
+    marginTop: 10,
     alignItems: 'center',
-    borderRadius: 5,
+    // borderRadius: 5,
+  },
+  nextBtnText: {
+    color: '#3944bc',
+    fontSize: 18,
   },
   inputGetCodeContainer:{
     flexDirection:'row',
@@ -237,15 +257,6 @@ const styles = StyleSheet.create({
   coordinateLabelInputContainer: {
     gap: 5,
   },
-  coordinateLabelInputContainer:{
-    width:'65%',
-    gap: 5,
-  },
-  updateButtonText: {
-    color: '#fff',
-    fontSize: 18,
-  },
 });
 
-export default AdminProfile;
-
+export default TutorProfileOne;

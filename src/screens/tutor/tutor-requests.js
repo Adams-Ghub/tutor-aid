@@ -6,13 +6,14 @@ const TutorRequests = () => {
   const requests = [
     {
       id: 1,
-      parent: 'Stephen Appiah',
+      parent: 'Ronney Owusu Yeboah',
       location: 'Kasoa',
       long: '2222',
       lat: '3333',
+      distance:'17.2',
       wards: [
-        { student: 'John Doe', class: 'B2' },
-        { student: 'Clara Doe', class: 'B5' },
+        { student: 'John Owusu Yeboah', class: 'Basic 2' },
+        { student: 'Clara Owusu Yeboah', class: 'Basic 5' },
       ],
     },
     {
@@ -21,8 +22,9 @@ const TutorRequests = () => {
       location: 'Sprintex',
       long: '2222',
       lat: '3333',
+      distance:'39.2',
       wards: [
-        { student: 'Peter Oduro', class: 'B2' },
+        { student: 'Peter Oduro', class: 'Basic 2' },
        
       ],
     },
@@ -32,16 +34,18 @@ const TutorRequests = () => {
       location: 'Kasoa',
       long: '2222',
       lat: '3333',
+      distance:'15.6',
       wards: [
-        { student: 'Abigail Oppong', class: 'B4' },
-        { student: 'Carl Oppong', class: 'B2' },
-        { student: 'Samuel Oppong', class: 'B7' },
+        { student: 'Abigail Oppong', class: 'Basic 4' },
+        { student: 'Carl Oppong', class: 'Basic 2' },
+        { student: 'Samuel Oppong', class: 'Basic 7' },
       ],
     },
   ];
 
   return (
     <View style={styles.mainContainer} >
+      <Text style={styles.heading}>List of Requests</Text>
       <FlatList
         data={requests}
         renderItem={({ item }) => {
@@ -50,7 +54,7 @@ const TutorRequests = () => {
               parent={item.parent}
               students={item.wards}
               location={item.location}
-              distance={'20km'}
+              distance={item.distance}
             />
           );
         }}
@@ -67,7 +71,14 @@ const styles=StyleSheet.create({
     marginHorizontal: 10,
     justifyContent: 'flex-start',
     alignItems:'center',
-    width: '100%',   
+    // width: '90%',  
+    // backgroundColor: '#222', 
+  },
+  heading:{
+    fontSize:20,
+    fontWeight:'bold',
+    marginBottom:8,
+
   }
 })
 
