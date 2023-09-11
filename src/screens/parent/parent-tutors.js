@@ -13,17 +13,19 @@ const ParentTutors = () => {
   const navigation = useNavigation();
   const tutors = [
     {
-      name: 'John Kingston',
-      location: 'Kasoa',
+      name: 'Samuel Boadu',
+      location: 'Bortianor',
+      distance:17.2,
       profile: {
-        experience: 2,
-        contact: '+233 546 789590',
+        experience: 5,
+        contact: '+233 555 788590',
         resume: 'http://localhost/resume',
       },
     },
     {
       name: 'Vivian Baidoo',
-      location: 'Tema',
+      location: 'Sprintex',
+      distance:39.3,
       profile: {
         experience: 3,
         contact: '+233 546 789590',
@@ -47,6 +49,7 @@ const ParentTutors = () => {
                 name={item.name}
                 profile={item.profile}
                 location={item.location}
+                distance={item.distance}
                 onPressDetails={handlePressDetails}
               />
         

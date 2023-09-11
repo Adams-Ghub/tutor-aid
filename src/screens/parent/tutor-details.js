@@ -4,12 +4,13 @@ import InfoHeader from './info-header';
 
 function TutorDetails({navigation}) {
   const tutor = {
-    name: 'Vivian Baidoo',
-    location: 'Tema',
+    name: 'Samuel Boadu',
+    location: 'Kasoa',
+    distance: 17.2,
     profile: {
-      experience: 3,
-      contact: '+233 546 789590',
-      resume: 'http://localhost/resume',
+      experience: 5,
+      contact: '+233 555 788590',
+      resume: 'https://localhost/resume',
     },
   };
 
@@ -21,6 +22,7 @@ function TutorDetails({navigation}) {
           name={tutor.name}
           location={tutor.location}
           profile={tutor.profile}
+          distance={tutor.distance}
         />
       </View>
       <View style={styles.infoContainer}>
@@ -44,7 +46,11 @@ function TutorDetails({navigation}) {
 
         <View style={styles.infoItem}>
           <Text style={styles.label}>Resume link:</Text>
-          <Text style={styles.link}>www.example.com/resume</Text>
+          <Text style={styles.link}>https://localhost/resume</Text>
+        </View>
+        <View style={styles.infoItem}>
+          <Text style={styles.label}>Rate per month:</Text>
+          <Text style={styles.value}>GHS 300</Text>
         </View>
 
         <TouchableOpacity style={styles.requestButton} onPress={()=>navigation.navigate('RequestForm')} >
