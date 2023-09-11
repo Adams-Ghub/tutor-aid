@@ -98,6 +98,7 @@ function AdminNavigation({ navigation }) {
                   fontWeight: '600',
                   fontSize: 16,
                   marginRight: 15,
+                  width: 50,
                 }}
               >
                 {displayName[0]}
