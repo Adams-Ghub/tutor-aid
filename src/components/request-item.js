@@ -1,7 +1,11 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { useNavigation } from '@react-navigation/core';
 
 function RequestItem({ parent, location, distance, students }) {
+
+  const navigation = useNavigation();
+
   return (
     <View style={styles.principalContainer}>
       <View style={styles.parentLocDistanceContainer}>
@@ -20,7 +24,7 @@ function RequestItem({ parent, location, distance, students }) {
         </Text>
       </View>
       <View style={styles.dateContainer}>
-        <TouchableOpacity>
+        <TouchableOpacity onPress={()=>navigation.navigate('details')}>
           <Text style={styles.detailsText}>details</Text>
         </TouchableOpacity>
       </View>

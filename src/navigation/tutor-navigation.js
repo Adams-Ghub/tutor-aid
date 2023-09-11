@@ -7,6 +7,7 @@ import FormOne from '../screens/tutor/tutor-profile-one';
 import FormTwo from '../screens/tutor/tutor-profile-two';
 import Performance from '../screens/tutor/tutor-performance';
 import Requests from '../screens/tutor/tutor-requests';
+import RequestDetails from '../screens/tutor/request-details';
 import { TouchableOpacity, View, Text, Image } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 import { Logout } from '../redux/users/usersAction.js';
@@ -32,6 +33,28 @@ const TutorProfileNav=()=> {
         name="FormTwo"
         // options={{ header: () => {} }}
         component={FormTwo}
+      />
+    </Stack.Navigator>
+  );
+}
+const TutorRequestNav=()=> {
+  return (
+    <Stack.Navigator
+      screenOptions={{
+        header: () => null,
+      }}
+      initialRouteName="Request"
+
+    >
+      <Stack.Screen
+        name="Request"
+        // options={{ header: () => {} }}
+        component={Requests}
+      />
+      <Stack.Screen
+        name="details"
+        // options={{ header: () => {} }}
+        component={RequestDetails}
       />
     </Stack.Navigator>
   );
@@ -133,7 +156,7 @@ function TutorNavigation({ navigation }) {
     >
       <Drawer.Screen
         name="Requests"
-        component={Requests}
+        component={TutorRequestNav}
         options={{
           drawerLabel: () => {
             return (
