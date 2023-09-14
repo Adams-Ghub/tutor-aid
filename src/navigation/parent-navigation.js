@@ -30,18 +30,15 @@ const AllTutorSubNavigation = () => {
       initialRouteName="PTutors"
     >
       <Stack.Screen
-        name="PTutors"
-        // options={{ header: () => {} }}
+        name="PTutors"        
         component={ParentTutors}
       />
       <Stack.Screen
-        name="TutorDetails"
-        // options={{ header: () => {} }}
+        name="TutorDetails" 
         component={TutorDetails}
       />
       <Stack.Screen
         name="RequestForm"
-        // options={{ header: () => {} }}
         component={RequestForm}
       />
     </Stack.Navigator>

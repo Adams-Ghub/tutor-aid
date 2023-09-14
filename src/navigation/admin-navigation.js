@@ -5,30 +5,30 @@ import { DrawerActions } from '@react-navigation/native';
 import DrawerItem from '../components/drawer-item';
 import Profile from '../screens/admin/admin-profile';
 import Registrations from '../screens/admin/registrations';
+import ProfileDetails from '../screens/admin/profile-details';
 import { TouchableOpacity, View, Text, Image } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 import { Logout } from '../redux/users/usersAction.js';
 import { Entypo, AntDesign, MaterialIcons, Ionicons } from '@expo/vector-icons';
 import profileImg from '../../assets/profile.png';
 
+
 const Stack = createNativeStackNavigator();
-const ParentNavigatior = () => {
+const RegistrationNav = () => {
   return (
     <Stack.Navigator
       screenOptions={{
         header: () => null,
       }}
-      initialRouteName="PrescriptionScreen"
+      initialRouteName="AdminRegistrations"
     >
       <Stack.Screen
-        name="PrescriptionScreen"
-        // options={{ header: () => {} }}
-        component={PrescriptionScreen}
+        name="AdminRegistrations"       
+        component={Registrations}
       />
       <Stack.Screen
-        name="AddPrescription"
-        // options={{ header: () => {} }}
-        component={AddPrescriptionScreen}
+        name="ProfileDetails"
+        component={ProfileDetails}
       />
     </Stack.Navigator>
   );
@@ -148,7 +148,7 @@ function AdminNavigation({ navigation }) {
 
       <Drawer.Screen
         name="Registrations"
-        component={Registrations}
+        component={RegistrationNav}
         options={{
           drawerLabel: () => {
             return (
