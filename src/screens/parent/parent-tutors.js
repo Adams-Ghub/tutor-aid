@@ -5,6 +5,7 @@ import {
   StyleSheet,
   View,
   FlatList,
+  TextInput,
 } from 'react-native';
 import TutorComponent from '../../components/tutor-component';
 import { useNavigation } from '@react-navigation/native';
@@ -40,6 +41,7 @@ const ParentTutors = () => {
 
   return (
     <View style={styles.mainContainer}>
+      <TextInput placeholder='enter location to filter tutors' style={styles.locationSearch} />
       <FlatList
         data={tutors}
         renderItem={({ item }) => {
@@ -69,6 +71,15 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-start',
     alignItems: 'stretch',
   },
+  locationSearch:{
+    borderStyle:'solid',
+    borderWidth:1,
+    borderColor: '#bbb',
+    borderRadius:5,
+    fontSize:16,
+    paddingHorizontal:5,
+    marginVertical:5,
+  }
 });
 
 export default ParentTutors;
