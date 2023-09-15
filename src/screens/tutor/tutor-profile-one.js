@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import {useSelector,useDispatch} from 'react-redux';
 import * as ImagePicker from 'expo-image-picker';
 import {
   View,
@@ -9,13 +10,19 @@ import {
   Image,
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import { GetUser } from '../../redux/users/usersAction';
 
 function TutorProfileOne() {
+  const { user } = useSelector((state) => state.users);
+  const dispatch =useDispatch()
+
   const [image, setImage] = useState(null);
-  const [fullName, setFullName]=useState('Samuel Boadu')
-  const [email, setEmail]=useState('samg@gmail.com')
-  const [location, setLocation]=useState('Samuel Boadu')
-  const [phone, setPhone]=useState('+233 555 788590')
+  const [fullName, setFullName] = useState(user.details.fullName);
+  const [email, setEmail] = useState(user.details.email);
+  const [location, setLocation] = useState(user.details.profile.location);
+  const [phone, setPhone] = useState(user.details.phone);
+  const [status, setStatus] = useState(user.details.status);
+  const [statusStyle, setStatusStyle] = useState(styles.pending);
   const navigation = useNavigation();
   const pickImage = async () => {
     // No permissions request is necessary for launching the image library
@@ -32,9 +39,16 @@ function TutorProfileOne() {
       setImage(result.assets[0].uri);
     }
   };
+
+  useEffect(()=>{
+    dispatch(GetUser)
+  },[user])
+
+
   return (
     <View style={styles.mainContainer}>
       <Text style={styles.heading}>Teacher Profile</Text>
+      <Text style={statusStyle}>{status}</Text>
       <View style={styles.imageMajorContainer}>
         <TouchableOpacity
           onPress={pickImage}
@@ -62,7 +76,11 @@ function TutorProfileOne() {
               <Text style={styles.editButtonText}>edit</Text>
             </TouchableOpacity>
           </View>
-          <TextInput style={styles.allTextInput} value={fullName} />
+          <TextInput
+            style={styles.allTextInput}
+            value={fullName}
+            onChangeText={(text) => setFullName(text)}
+          />
         </View>
         <View style={styles.emailAndInputContainer}>
           <View style={styles.emailEditContainer}>
@@ -71,7 +89,11 @@ function TutorProfileOne() {
               <Text style={styles.editButtonText}>edit</Text>
             </TouchableOpacity>
           </View>
-          <TextInput style={styles.allTextInput} value={email} />
+          <TextInput
+            style={styles.allTextInput}
+            value={email}
+            onChangeText={(text) => setEmail(text)}
+          />
         </View>
 
         <View style={styles.phoneAndInputContainer}>
@@ -81,7 +103,11 @@ function TutorProfileOne() {
               <Text style={styles.editButtonText}>edit</Text>
             </TouchableOpacity>
           </View>
-          <TextInput style={styles.allTextInput} value={phone} />
+          <TextInput
+            style={styles.allTextInput}
+            onChangeText={(text) => setPhone(text)}
+            value={phone}
+          />
         </View>
         <View style={styles.pharmacyAndInputContainer}>
           <View style={styles.pharmacyEditContainer}>
@@ -92,7 +118,11 @@ function TutorProfileOne() {
               <Text style={styles.editButtonText}>edit</Text>
             </TouchableOpacity>
           </View>
-          <TextInput style={styles.allTextInput} value={location}/>
+          <TextInput
+            style={styles.allTextInput}
+            value={location}
+            onChangeText={(text) => setLocation(text)}
+          />
         </View>
         <View style={styles.regNumberAndInputContainer}>
           <View style={styles.regNumberEditContainer}>
@@ -102,7 +132,10 @@ function TutorProfileOne() {
                   coordinates
                 </Text>
                 <View style={styles.inputGetCodeContainer}>
-                  <TextInput style={styles.codeTextInput} placeholder='click Get code button'/>
+                  <TextInput
+                    style={styles.codeTextInput}
+                    placeholder="click Get code button"
+                  />
                   <TouchableOpacity style={styles.getCodeBtn}>
                     <Text style={styles.getCodeText}>Get code</Text>
                   </TouchableOpacity>
@@ -116,7 +149,11 @@ function TutorProfileOne() {
         </View>
         <View>
           <TouchableOpacity
-            onPress={() => navigation.navigate('FormTwo')}
+            onPress={() =>
+              navigation.navigate('FormTwo', {
+                data: { name: fullName, location, phone, email,status },
+              })
+            }
             style={styles.nextBtn}
           >
             <Text style={styles.nextBtnText}>next</Text>
@@ -159,6 +196,22 @@ const styles = StyleSheet.create({
     flex: 0.5,
     width: '100%',
   },
+
+  pending: {
+    fontSize: 17,
+    fontWeight: 'bold',
+    color: 'orange',
+  },
+  approved: {
+    fontSize: 17,
+    fontWeight: 'bold',
+    color: 'green',
+  },
+  declined: {
+    fontSize: 17,
+    fontWeight: 'bold',
+    color: 'red',
+  },
   usernameEditContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -196,17 +249,16 @@ const styles = StyleSheet.create({
     paddingHorizontal: 5,
     fontSize: 14,
     height: 24,
-    width: '70%'
+    width: '70%',
   },
   getCodeBtn: {
     backgroundColor: '#3944bc',
     paddingVertical: 4,
     paddingHorizontal: 8,
-    borderRadius:5,    
+    borderRadius: 5,
   },
   getCodeText: {
-    color:'#fff', 
-    
+    color: '#fff',
   },
   heading: {
     fontSize: 20,
@@ -227,7 +279,7 @@ const styles = StyleSheet.create({
   emailAndInputContainer: {
     marginBottom: 10,
   },
-  
+
   pharmacyAndInputContainer: {
     marginBottom: 10,
   },
@@ -246,9 +298,9 @@ const styles = StyleSheet.create({
     color: '#3944bc',
     fontSize: 18,
   },
-  inputGetCodeContainer:{
-    flexDirection:'row',
-    justifyContent:'space-between'
+  inputGetCodeContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
   },
   coordinateContainer: {
     flexDirection: 'row',
