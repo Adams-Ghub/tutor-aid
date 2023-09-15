@@ -5,7 +5,16 @@ import {
   getAuth,
   signOut,
 } from 'firebase/auth';
-import { setDoc, getDoc, doc, getDocs, collection } from 'firebase/firestore';
+import {
+  setDoc,
+  getDoc,
+  doc,
+  getDocs,
+  collection,
+  updateDoc,
+  onSnapshot,
+  query,
+} from 'firebase/firestore';
 import { auth, db } from '../../firebase/firebase.js';
 
 export const RegisterUser = createAsyncThunk(
@@ -78,19 +87,64 @@ export const Logout = createAsyncThunk('user/Logout', async (_, thunkAPI) => {
   }
 });
 
-export const GetAllUsers = createAsyncThunk(
-  'user/getUsers',
-  async (_, thunkAPI) => {
+/*
+const q = query(collection(db, "cities"), where("state", "==", "CA"));
+const unsubscribe = onSnapshot(q, (querySnapshot) => {
+  const cities = [];
+  querySnapshot.forEach((doc) => {
+      cities.push(doc.data().name);
+  });
+  console.log("Current cities in CA: ", cities.join(", "));
+});
+*/
+
+export const GetUser = createAsyncThunk(
+  'user/getUser',
+  async ({id}, thunkAPI) => {
     try {
       const userData = [];
-      const querySnapshot = await getDocs(collection(db, 'users'));
-      querySnapshot.forEach((doc) => {
-        // doc.data() is never undefined for query doc snapshots
-        console.log(doc.id, ' => ', doc.data());
-        userData.push(doc.data());
+      const q = query(collection(db, 'users'),where("id", "==", id));
+      const unsubscribe = onSnapshot(q, (querySnapshot) => {
+        querySnapshot.forEach((doc) => {
+          userData.push(doc.data());
+        });
       });
+
       return userData;
     } catch (error) {
+      throw error;
+    }
+  }
+);
+
+export const UpdateProfile = createAsyncThunk(
+  'profile-update',
+  async ({ data }, thunkAPI) => {
+    try {
+      const profile = doc(db, 'users', data.id);
+
+      await updateDoc(profile, {
+        email: data.email,
+        fullName: data.name,
+        id: data.id,
+        phone: data.phone,
+        photo: 'link',
+        profile: {
+          education: data.education,
+          lat: data.lat || '',
+          location: data.location,
+          long: data.long || '',
+          profSummary: data.profSummary,
+          rate: data.rate,
+          resume: data.resume,
+          subjects: data.subjects,
+          experience: data.experience,
+        },
+        role: data.role,
+        status: data.status,
+      });
+    } catch (error) {
+      alert(error.message);
       throw error;
     }
   }
