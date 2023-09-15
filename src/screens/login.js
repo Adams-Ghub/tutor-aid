@@ -19,30 +19,17 @@ export default function Login({ navigation }) {
   const [showPassword, setShowPassword] = useState(false);
   const [isModalVisible, setModalVisible] = useState(false);
   const dispatch = useDispatch();
-  const { user, logged, loading } = useSelector((state) => state.users);
+
 
   const handleLogin = () => {
     dispatch(UserLogin({ email, password }));
+   
   };
 
   const handleModalClose = () => {
     setModalVisible(false);
   };
 
-  useEffect(() => {
-    if (logged) {
-      setEmail('');
-      setPassword('');
-      // console.log('role:', user.details.role);
-      if (user.details.role === 'tutor') {
-        navigation.navigate('TutorWelcome');
-      } else if (user.details.role === 'parent') {
-        navigation.navigate('ParentWelcome');
-      } else {
-        navigation.navigate('AdminWelcome');
-      }
-    }
-  }, [logged]);
 
   return (
     <View style={styles.container}>

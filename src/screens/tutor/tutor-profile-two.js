@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import {
   View,
   Text,
@@ -7,43 +8,66 @@ import {
   Button,
   StyleSheet,
 } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useRoute } from '@react-navigation/native';
+import { UpdateProfile } from '../../redux/users/usersAction';
+import { GetUser } from '../../redux/users/usersAction';
+import { updateUser } from '../../redux/users/usersSlice';
 
 const TutorProfileTwo = () => {
-  const [name, setName] = useState('');
-  const [profSummary, setProfSummary] = useState(' A passionate tutor with over five years of experience teaching basic school children');
-  const [subjects, setSubjects] = useState('English, Maths, Science');
-  const [teachingExperience, setTeachingExperience] = useState('5');
-  const [education, setEducation] = useState('BEd. Basic Education');
-  const [resume, setResume] = useState('https://localhost/resume');
-  const [rate, setRate] = useState('300');
+  const { updateMsg, user } = useSelector((state) => state.users);
+
+  const [profSummary, setProfSummary] = useState(
+    user.details.profile.profSummary
+  );
+  const [subjects, setSubjects] = useState(user.details.profile.subjects);
+  const [experience, setExperience] = useState(user.details.profile.experience);
+  const [education, setEducation] = useState(user.details.profile.education);
+  const [resume, setResume] = useState(user.details.profile.resume);
+  const [rate, setRate] = useState(user.details.profile.rate);
+
+  const navigation = useNavigation();
+  const dispatch = useDispatch();
+  const route = useRoute();
+
+  let data = route.params.data;
+  console.log('data:', data);
+
+  data = {
+    ...data,
+    rate,
+    education,
+    experience,
+    profSummary,
+    resume,
+    subjects,
+    role: user.details.role,
+    id: user.id,
+  };
 
   const handleSubmit = () => {
-    const profileData = {
-      name,
-      bio,
-      subjects,
-      teachingExperience,
-      education,
-      // ... other profile fields
-    };
-
-    onSubmit(profileData);
+    dispatch(UpdateProfile({ data }));
+    // dispatch(updateUser(data));
+    console.log('after:', data);
   };
-  const navigation = useNavigation();
+
+  useEffect(()=>{
+    dispatch(GetUser)
+  },[user])
+
   return (
     <View style={styles.container}>
-       
       <TouchableOpacity
         onPress={() => navigation.navigate('FormOne')}
         style={styles.prevButton}
       >
-        <Text style={styles.prevButtonText}>{"<< previous"}</Text>
+        <Text style={styles.prevButtonText}>{'<< previous'}</Text>
       </TouchableOpacity>
       <Text style={styles.heading}>Profession Information</Text>
       <View style={styles.usernameAndInputContainer}>
         <View style={styles.usernameEditContainer}>
-          <Text style={[styles.usernameText, styles.labelText]}>Highest Education level</Text>
+          <Text style={[styles.usernameText, styles.labelText]}>
+            Highest Education level
+          </Text>
           <TouchableOpacity style={styles.editButton}>
             <Text style={styles.editButtonText}>edit</Text>
           </TouchableOpacity>
@@ -72,7 +96,9 @@ const TutorProfileTwo = () => {
       </View>
       <View style={styles.usernameAndInputContainer}>
         <View style={styles.usernameEditContainer}>
-          <Text style={[styles.usernameText, styles.labelText]}>{"Teaching Experience (years)"}</Text>
+          <Text style={[styles.usernameText, styles.labelText]}>
+            {'Teaching Experience (years)'}
+          </Text>
           <TouchableOpacity style={styles.editButton}>
             <Text style={styles.editButtonText}>edit</Text>
           </TouchableOpacity>
@@ -80,15 +106,17 @@ const TutorProfileTwo = () => {
         <TextInput
           style={styles.input}
           placeholder="Eg. 4"
-          keyboardType='numeric'
-          value={teachingExperience}
-          onChangeText={setTeachingExperience}
+          keyboardType="numeric"
+          value={experience}
+          onChangeText={setExperience}
         />
       </View>
 
       <View style={styles.usernameAndInputContainer}>
         <View style={styles.usernameEditContainer}>
-          <Text style={[styles.usernameText, styles.labelText]}>Professional Summary</Text>
+          <Text style={[styles.usernameText, styles.labelText]}>
+            Professional Summary
+          </Text>
           <TouchableOpacity style={styles.editButton}>
             <Text style={styles.editButtonText}>edit</Text>
           </TouchableOpacity>
@@ -96,8 +124,8 @@ const TutorProfileTwo = () => {
         <TextInput
           style={styles.input}
           multiline={true}
-          numberOfLines={5} 
-          textAlignVertical='top'
+          numberOfLines={5}
+          textAlignVertical="top"
           placeholder="Subjects"
           value={profSummary}
           onChangeText={setProfSummary}
@@ -106,7 +134,9 @@ const TutorProfileTwo = () => {
 
       <View style={styles.usernameAndInputContainer}>
         <View style={styles.usernameEditContainer}>
-          <Text style={[styles.usernameText, styles.labelText]}>Resume Link</Text>
+          <Text style={[styles.usernameText, styles.labelText]}>
+            Resume Link
+          </Text>
           <TouchableOpacity style={styles.editButton}>
             <Text style={styles.editButtonText}>edit</Text>
           </TouchableOpacity>
@@ -120,7 +150,9 @@ const TutorProfileTwo = () => {
       </View>
       <View style={styles.usernameAndInputContainer}>
         <View style={styles.usernameEditContainer}>
-          <Text style={[styles.usernameText, styles.labelText]}>{'Rate per month (GHS)'}</Text>
+          <Text style={[styles.usernameText, styles.labelText]}>
+            {'Rate per month (GHS)'}
+          </Text>
           <TouchableOpacity style={styles.editButton}>
             <Text style={styles.editButtonText}>edit</Text>
           </TouchableOpacity>
@@ -132,8 +164,8 @@ const TutorProfileTwo = () => {
           onChangeText={setRate}
         />
       </View>
-
-      <TouchableOpacity style={styles.updateButton}>
+      <Text>{updateMsg}</Text>
+      <TouchableOpacity style={styles.updateButton} onPress={handleSubmit}>
         <Text style={styles.updateButtonText}>update</Text>
       </TouchableOpacity>
     </View>
@@ -143,10 +175,10 @@ const TutorProfileTwo = () => {
 const styles = StyleSheet.create({
   container: {
     padding: 20,
-    justifyContent:'flex-start',
-    gap:10
+    justifyContent: 'flex-start',
+    gap: 10,
   },
-  
+
   input: {
     borderColor: 'gray',
     borderWidth: 1,
@@ -162,22 +194,21 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
   },
-  updateButton:{
-    backgroundColor:'#3944bc',
-    paddingVertical:5,
-    marginTop:30,
+  updateButton: {
+    backgroundColor: '#3944bc',
+    paddingVertical: 5,
+    marginTop: 30,
     alignItems: 'center',
-    borderRadius:5,
-
+    borderRadius: 5,
   },
   heading: {
     fontSize: 20,
     fontWeight: 'bold',
     marginBottom: 10,
   },
-  updateButtonText:{
-    color:'#fff',
-    fontSize:20,
+  updateButtonText: {
+    color: '#fff',
+    fontSize: 20,
   },
   editButtonText: {
     color: '#3944bc',
@@ -186,7 +217,7 @@ const styles = StyleSheet.create({
   prevButton: {
     marginTop: 10,
     alignItems: 'center',
-    alignSelf: 'flex-end'
+    alignSelf: 'flex-end',
     // borderRadius: 5,
   },
   prevButtonText: {
@@ -196,4 +227,3 @@ const styles = StyleSheet.create({
 });
 
 export default TutorProfileTwo;
-
