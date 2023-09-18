@@ -2,7 +2,7 @@ import React from 'react';
 import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
 import profileImage from '../../assets/profile.png';
 
-const TutorComponent = ({ name, profile, location,distance, onPressDetails }) => {
+const TutorComponent = ({ info, distance, onPressDetails }) => {
   return (
     <View style={styles.mainContainer}>
       <View style={styles.imageContainer}>
@@ -10,18 +10,18 @@ const TutorComponent = ({ name, profile, location,distance, onPressDetails }) =>
       </View>
       <View style={styles.infoContainer}>
         <View style={styles.nameExperienceContainer}>
-          <Text style={styles.fullNameText}>{name}</Text>
-          <Text style={styles.experienceText}>{profile.experience} yrs</Text>
+          <Text style={styles.fullNameText}>{info.fullName}</Text>
+          <Text style={styles.experienceText}>{info.profile.experience} yrs</Text>
         </View>
         <View style={styles.contactLocationContainer}>
-          <Text style={styles.contactText}>{profile.contact}</Text>
+          <Text style={styles.contactText}>{info.phone}</Text>
           <View style={styles.locationDistanceContainer}>
-            <Text style={styles.locationText}>{location}</Text>
+            <Text style={styles.locationText}>{info.location}</Text>
             <Text style={styles.locationText}>{distance+"km"}</Text>
           </View>
         </View>
         <View>
-          <TouchableOpacity onPress={() => onPressDetails('TutorDetails')}>
+          <TouchableOpacity onPress={() => onPressDetails({link:'TutorDetails',data:{info}})}>
             <Text style={styles.detailsLinkText}>details</Text>
           </TouchableOpacity>
         </View>
