@@ -1,4 +1,5 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
+import { useDispatch } from 'react-redux';
 import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
@@ -16,11 +17,12 @@ import {
   query,
 } from 'firebase/firestore';
 import { auth, db } from '../../firebase/firebase.js';
+import { setRequestUpdate } from './requestsSlice.js';
 
 export const MakeRequests = createAsyncThunk(
   'request',
-  async (data , thunkAPI) => {
-    console.log('requestInfo:',data);
+  async (data, thunkAPI) => {
+    console.log('requestInfo:', data);
     try {
       await setDoc(doc(db, 'requests', data.id), {
         id: data.id,
@@ -28,10 +30,10 @@ export const MakeRequests = createAsyncThunk(
         tutorId: data.tutorId,
         parent: data.parent,
         parentId: data.parentId,
-        location:data.location,
-        phone:data.phone,
+        location: data.location,
+        phone: data.phone,
         wards: data.wards,
-        notes:data.notes,
+        notes: data.notes,
         status: 'pending',
       });
     } catch (error) {
@@ -71,32 +73,6 @@ export const GetRequests = createAsyncThunk(
   }
 );
 
-// export const GetAllUsers = createAsyncThunk(
-//   'user/getUsers',
-//   async (_, thunkAPI) => {
-//     try {
-//       const userData = [];
-
-//       // Use onSnapshot to listen to changes in the 'users' collection
-//       const querySnapshot = await onSnapshot(collection(db, 'users'), (snapshot) => {
-//         snapshot.forEach((doc) => {
-//           // doc.data() is never undefined for query doc snapshots
-//           console.log(doc.id, ' => ', doc.data());
-//           userData.push(doc.data());
-//         });
-//       });
-
-//       // Wait for the onSnapshot promise to resolve before returning the userData array
-//       await querySnapshot;
-
-//       return userData;
-//     } catch (error) {
-//       alert(error.message);
-//       throw error;
-//     }
-//   }
-// );
-
 export const UpdateRequest = createAsyncThunk(
   'updateRequest',
   async ({ data }, thunkAPI) => {
@@ -132,16 +108,33 @@ export const UpdateRequest = createAsyncThunk(
 
 export const AcceptRequest = createAsyncThunk(
   'Approve',
-  async ( datum, thunkAPI) => {
+  async (datum, thunkAPI) => {
     try {
       const profile = doc(db, 'requests', datum.id);
 
       await updateDoc(profile, {
         status: datum.status,
       });
+      console.log('datum',datum)
     } catch (error) {
       alert(error.message);
       throw error;
     }
   }
 );
+
+//The listener Actions
+// const dispatch = useDispatch();
+export const listenToRequestUpdate = () => (dispatch) => {
+  const firestoreCollection = collection(db, 'requests');
+
+  const unsubscribe = onSnapshot(firestoreCollection, (snapshot) => {
+    const data = snapshot.docs.map((doc) => ({
+      ...doc.data(),
+    }));
+    dispatch(setRequestUpdate(data));
+  });
+
+  // Clean up the listener when needed
+  return () => unsubscribe();
+};
