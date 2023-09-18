@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React,{useEffect} from 'react';
 import {
   StyleSheet,
   View,
@@ -8,8 +8,22 @@ import {
 } from 'react-native';
 import AdminTutorComponent from '../../components/admin-tutor-component';
 import { useNavigation } from '@react-navigation/native';
+import {GetAllUsers} from '../../redux/users/usersAction';
+import {useDispatch, useSelector} from 'react-redux'
 
 const Registrations = () => {
+
+  const dispatch = useDispatch();
+  const {allUsers} =useSelector((state)=>state.users);
+
+   useEffect(()=>{
+    dispatch(GetAllUsers())
+   },[]);
+
+  const userTutors=allUsers.filter((tutor)=>tutor.role==='tutor');
+
+  console.log("tutors", userTutors)
+
   const navigation = useNavigation();
   const tutors = [
     {
@@ -42,16 +56,13 @@ const Registrations = () => {
     <View style={styles.mainContainer}>
       <TextInput placeholder='enter location to filter tutors' style={styles.locationSearch} />
       <FlatList
-        data={tutors}
+        data={userTutors}
         renderItem={({ item }) => {
           return (
            
               <AdminTutorComponent
-                name={item.name}
-                profile={item.profile}
-                location={item.location}
-                distance={item.distance}
-                onPressDetails={handlePressDetails}
+                info={item}
+                distance={"20 "}
               />
         
           );
