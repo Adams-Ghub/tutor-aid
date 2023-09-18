@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
   View,
@@ -7,23 +7,25 @@ import {
   TextInput,
   Button,
   StyleSheet,
+  ScrollView,
+  Dimensions,
 } from 'react-native';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { UpdateProfile } from '../../redux/users/usersAction';
 import { GetUser } from '../../redux/users/usersAction';
-import { updateUser } from '../../redux/users/usersSlice';
+import { clearUpdateMsg, updateUser } from '../../redux/users/usersSlice';
 
 const TutorProfileTwo = () => {
   const { updateMsg, user } = useSelector((state) => state.users);
 
   const [profSummary, setProfSummary] = useState(
-    user.details.profile.profSummary
+    user.profile.profSummary
   );
-  const [subjects, setSubjects] = useState(user.details.profile.subjects);
-  const [experience, setExperience] = useState(user.details.profile.experience);
-  const [education, setEducation] = useState(user.details.profile.education);
-  const [resume, setResume] = useState(user.details.profile.resume);
-  const [rate, setRate] = useState(user.details.profile.rate);
+  const [subjects, setSubjects] = useState(user.profile.subjects);
+  const [experience, setExperience] = useState(user.profile.experience);
+  const [education, setEducation] = useState(user.profile.education);
+  const [resume, setResume] = useState(user.profile.resume);
+  const [rate, setRate] = useState(user.profile.rate);
 
   const navigation = useNavigation();
   const dispatch = useDispatch();
@@ -40,22 +42,31 @@ const TutorProfileTwo = () => {
     profSummary,
     resume,
     subjects,
-    role: user.details.role,
+    role: user.role,
     id: user.id,
   };
 
+  console.log('after:', data);
+
   const handleSubmit = () => {
-    dispatch(UpdateProfile({ data }));
-    // dispatch(updateUser(data));
-    console.log('after:', data);
+    dispatch(UpdateProfile( data ));
   };
 
   useEffect(()=>{
-    dispatch(GetUser)
-  },[user])
+    if(updateMsg==='profile updated successfully'){
+      setTimeout(() => {
+        dispatch(clearUpdateMsg());
+      }, 5000);
+    }
+  },[updateMsg])
+
+  const windowWidth = Dimensions.get('window').width;
 
   return (
-    <View style={styles.container}>
+    <ScrollView
+      style={styles.container}
+      contentContainerStyle={styles.scrollContent}
+    >
       <TouchableOpacity
         onPress={() => navigation.navigate('FormOne')}
         style={styles.prevButton}
@@ -63,66 +74,39 @@ const TutorProfileTwo = () => {
         <Text style={styles.prevButtonText}>{'<< previous'}</Text>
       </TouchableOpacity>
       <Text style={styles.heading}>Profession Information</Text>
-      <View style={styles.usernameAndInputContainer}>
-        <View style={styles.usernameEditContainer}>
-          <Text style={[styles.usernameText, styles.labelText]}>
-            Highest Education level
-          </Text>
-          <TouchableOpacity style={styles.editButton}>
-            <Text style={styles.editButtonText}>edit</Text>
-          </TouchableOpacity>
-        </View>
+      <View style={styles.inputContainer}>
+        <Text style={styles.labelText}>Highest Education level</Text>
         <TextInput
-          style={styles.input}
+          style={[styles.input, { maxWidth: windowWidth - 40 }]} // Adjust maxWidth based on window width
           placeholder="Eg. BEd. Basic Education"
           value={education}
           onChangeText={setEducation}
         />
       </View>
-      <View style={styles.usernameAndInputContainer}>
-        <View style={styles.usernameEditContainer}>
-          <Text style={[styles.usernameText, styles.labelText]}>Subjects</Text>
-          <TouchableOpacity style={styles.editButton}>
-            <Text style={styles.editButtonText}>edit</Text>
-          </TouchableOpacity>
-        </View>
+      <View style={styles.inputContainer}>
+        <Text style={styles.labelText}>Subjects</Text>
         <TextInput
-          style={styles.input}
+          style={[styles.input, { maxWidth: windowWidth - 40 }]} // Adjust maxWidth based on window width
           placeholder="Eg. ICT, Science, Maths"
           value={subjects}
           onChangeText={setSubjects}
           multiline
         />
       </View>
-      <View style={styles.usernameAndInputContainer}>
-        <View style={styles.usernameEditContainer}>
-          <Text style={[styles.usernameText, styles.labelText]}>
-            {'Teaching Experience (years)'}
-          </Text>
-          <TouchableOpacity style={styles.editButton}>
-            <Text style={styles.editButtonText}>edit</Text>
-          </TouchableOpacity>
-        </View>
+      <View style={styles.inputContainer}>
+        <Text style={styles.labelText}>Teaching Experience (years)</Text>
         <TextInput
-          style={styles.input}
+          style={[styles.input, { maxWidth: windowWidth - 40 }]} // Adjust maxWidth based on window width
           placeholder="Eg. 4"
           keyboardType="numeric"
           value={experience}
           onChangeText={setExperience}
         />
       </View>
-
-      <View style={styles.usernameAndInputContainer}>
-        <View style={styles.usernameEditContainer}>
-          <Text style={[styles.usernameText, styles.labelText]}>
-            Professional Summary
-          </Text>
-          <TouchableOpacity style={styles.editButton}>
-            <Text style={styles.editButtonText}>edit</Text>
-          </TouchableOpacity>
-        </View>
+      <View style={styles.inputContainer}>
+        <Text style={styles.labelText}>Professional Summary</Text>
         <TextInput
-          style={styles.input}
+          style={[styles.input, { maxWidth: windowWidth - 40 }]} // Adjust maxWidth based on window width
           multiline={true}
           numberOfLines={5}
           textAlignVertical="top"
@@ -131,34 +115,19 @@ const TutorProfileTwo = () => {
           onChangeText={setProfSummary}
         />
       </View>
-
-      <View style={styles.usernameAndInputContainer}>
-        <View style={styles.usernameEditContainer}>
-          <Text style={[styles.usernameText, styles.labelText]}>
-            Resume Link
-          </Text>
-          <TouchableOpacity style={styles.editButton}>
-            <Text style={styles.editButtonText}>edit</Text>
-          </TouchableOpacity>
-        </View>
+      <View style={styles.inputContainer}>
+        <Text style={styles.labelText}>Resume Link</Text>
         <TextInput
-          style={styles.input}
+          style={[styles.input, { maxWidth: windowWidth - 40 }]} // Adjust maxWidth based on window width
           placeholder="Eg. https://docs.google.com/document"
           value={resume}
           onChangeText={setResume}
         />
       </View>
-      <View style={styles.usernameAndInputContainer}>
-        <View style={styles.usernameEditContainer}>
-          <Text style={[styles.usernameText, styles.labelText]}>
-            {'Rate per month (GHS)'}
-          </Text>
-          <TouchableOpacity style={styles.editButton}>
-            <Text style={styles.editButtonText}>edit</Text>
-          </TouchableOpacity>
-        </View>
+      <View style={styles.inputContainer}>
+        <Text style={styles.labelText}>Rate per month (GHS)</Text>
         <TextInput
-          style={styles.input}
+          style={[styles.input, { maxWidth: windowWidth - 40 }]} // Adjust maxWidth based on window width
           placeholder="Eg. 300"
           value={rate}
           onChangeText={setRate}
@@ -168,21 +137,25 @@ const TutorProfileTwo = () => {
       <TouchableOpacity style={styles.updateButton} onPress={handleSubmit}>
         <Text style={styles.updateButtonText}>update</Text>
       </TouchableOpacity>
-    </View>
+    </ScrollView>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
+    flex: 1,
     padding: 20,
-    justifyContent: 'flex-start',
-    gap: 10,
   },
-
+  scrollContent: {
+    justifyContent: 'flex-start',
+  },
+  inputContainer: {
+    marginBottom: 20,
+  },
   input: {
     borderColor: 'gray',
     borderWidth: 1,
-    marginBottom: 10,
+    marginBottom: 5,
     paddingHorizontal: 4,
     borderRadius: 5,
   },
@@ -190,16 +163,12 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: '600',
   },
-  usernameEditContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-  },
   updateButton: {
     backgroundColor: '#3944bc',
     paddingVertical: 5,
-    marginTop: 30,
     alignItems: 'center',
     borderRadius: 5,
+    marginBottom:40
   },
   heading: {
     fontSize: 20,
@@ -210,15 +179,10 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontSize: 20,
   },
-  editButtonText: {
-    color: '#3944bc',
-    fontSize: 16,
-  },
   prevButton: {
     marginTop: 10,
     alignItems: 'center',
     alignSelf: 'flex-end',
-    // borderRadius: 5,
   },
   prevButtonText: {
     color: '#3944bc',
