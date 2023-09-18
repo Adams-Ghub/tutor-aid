@@ -5,11 +5,16 @@ import {
   TouchableOpacity,
   StyleSheet,
   TextInput,
+  ScrollView,
 } from 'react-native';
 import InfoHeader from '../parent/info-header';
 import { RadioButton } from 'react-native-paper';
+import { useRoute } from '@react-navigation/native';
+import { useDispatch } from 'react-redux';
+import { approval } from '../../redux/users/usersSlice';
+import { ApproveTutor } from '../../redux/users/usersAction';
 
-function ProfileDetails({ navigation }) {
+function ProfileDetails() {
   const tutor = {
     name: 'Samuel Boadu',
     location: 'Kasoa',
@@ -21,46 +26,59 @@ function ProfileDetails({ navigation }) {
     },
   };
 
-  const [checked, setChecked] = useState('first');
-  const [status, setStatus] = useState('review');
+  const route = useRoute();
+  const data = route.params.data;
+
+  const [checked, setChecked] = useState(
+    data.status === 'declined'
+      ? 'first'
+      : data.status === 'approved'
+      ? 'second'
+      : 'third'
+  );
+  const [status, setStatus] = useState(data.status);
+  const dispatch = useDispatch();
+
+  const handleApproval = () => {
+    dispatch(approval(payload={id:data.id,status}));
+    dispatch(ApproveTutor({id:data.id,status}))
+    
+  };
+
+  console.log('fromComponent: ', data);
 
   return (
     <View style={styles.container}>
       <Text style={styles.header}>Professional Info</Text>
       <View style={styles.headerContainer}>
-        <InfoHeader
-          name={tutor.name}
-          location={tutor.location}
-          profile={tutor.profile}
-          distance={tutor.distance}
-        />
+        <InfoHeader info={data} distance={tutor.distance} />
       </View>
-      <View style={styles.infoContainer}>
+      <ScrollView
+        style={styles.infoContainer}
+        showsVerticalScrollIndicator={false}
+      >
         <View style={styles.infoItem}>
           <Text style={styles.label}>Education:</Text>
-          <Text style={styles.value}>BEd. Basic Education</Text>
+          <Text style={styles.value}>{data.profile.education}</Text>
         </View>
 
         <View style={styles.infoItem}>
           <Text style={styles.label}>Subjects:</Text>
-          <Text style={styles.value}>English, Maths, Science</Text>
+          <Text style={styles.value}>{data.profile.subjects}</Text>
         </View>
 
         <View style={styles.profSummarySection}>
           <Text style={styles.label}>Professional Summary:</Text>
-          <Text style={styles.value}>
-            A passionate tutor with over five years of experience teaching basic
-            school children
-          </Text>
+          <Text style={styles.value}>{data.profile.profSummary}</Text>
         </View>
 
         <View style={styles.infoItem}>
           <Text style={styles.label}>Resume link:</Text>
-          <Text style={styles.link}>https://localhost/resume</Text>
+          <Text style={styles.link}>{data.profile.resume}</Text>
         </View>
         <View style={styles.infoItem}>
           <Text style={styles.label}>Rate per month:</Text>
-          <Text style={styles.value}>GHS 300</Text>
+          <Text style={styles.value}>{'GHS ' + data.profile.rate}</Text>
         </View>
         <View style={styles.radioButtonsContainer}>
           <View style={styles.regularRadioButtonContainer}>
@@ -68,7 +86,10 @@ function ProfileDetails({ navigation }) {
               value="first"
               color="#3944bc"
               status={checked === 'first' ? 'checked' : 'unchecked'}
-              onPress={() => setChecked('first')}
+              onPress={() => {
+                setChecked('first');
+                setStatus('declined');
+              }}
             />
             <Text>declined</Text>
           </View>
@@ -97,7 +118,7 @@ function ProfileDetails({ navigation }) {
             <Text>pending</Text>
           </View>
         </View>
-        <View>
+        <View style={styles.noteInputLabelContainer}>
           <Text style={styles.noteLabel}>note:</Text>
           <TextInput
             multiline={true}
@@ -107,14 +128,11 @@ function ProfileDetails({ navigation }) {
             style={styles.noteInput}
           />
         </View>
-        <View>
-          <TouchableOpacity
-            style={styles.requestButton}
-            onPress={() => navigation.navigate('RequestForm')}
-          >
-            <Text style={styles.requestButtonText}>Submit</Text>
-          </TouchableOpacity>
-        </View>
+      </ScrollView>
+      <View>
+        <TouchableOpacity style={styles.requestButton} onPress={handleApproval}>
+          <Text style={styles.requestButtonText}>Submit</Text>
+        </TouchableOpacity>
       </View>
     </View>
   );
@@ -136,7 +154,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     padding: 15,
     elevation: 3,
-    flex: 1, // Occupy all available vertical space
+    flex: 0.8, // Occupy all available vertical space
   },
   radioButtonsContainer: {
     // flex: 1,
@@ -161,6 +179,9 @@ const styles = StyleSheet.create({
     alignSelf: 'flex-start',
     marginBottom: 18,
     width: '100%',
+  },
+  noteInputLabelContainer: {
+    marginBottom: '15%',
   },
   profSummarySection: {
     flexDirection: 'column',
@@ -188,11 +209,11 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     width: '100%',
   },
-  noteInput:{
-borderStyle:'solid',
-borderWidth:1,
-borderColor:'#ddd',
-padding:5
+  noteInput: {
+    borderStyle: 'solid',
+    borderWidth: 1,
+    borderColor: '#ddd',
+    padding: 5,
   },
   value: {
     fontSize: 16,

@@ -2,7 +2,7 @@ import React from 'react';
 import { View, Text, TouchableOpacity, Image,StyleSheet } from 'react-native';
 import profileImage from '../../../assets/profile.png';
 
-function InfoHeader({name, profile, location,distance}) {
+function InfoHeader({info,distance}) {
   return (
     <View style={styles.mainContainer}>
       <View style={styles.imageContainer}>
@@ -10,12 +10,12 @@ function InfoHeader({name, profile, location,distance}) {
       </View>
       <View style={styles.infoContainer}>
         <View style={styles.nameExperienceContainer}>
-          <Text style={styles.fullNameText}>{name}</Text>
-          <Text style={styles.experienceText}>{profile.experience} yrs</Text>
+          <Text style={styles.fullNameText}>{info.fullName}</Text>
+          <Text style={styles.experienceText}>{info.profile.experience} yrs</Text>
         </View>
         <View style={styles.contactLocationContainer}>
-          <Text style={styles.contactText}>{profile.contact}</Text>
-          <Text style={styles.locationText}>{location}{" "+distance+"km"}</Text>
+          <Text style={styles.contactText}>{info.phone}</Text>
+          <Text style={styles.locationText}>{info.location}{" "+distance+"km"}</Text>
         </View>
       </View>
     </View>

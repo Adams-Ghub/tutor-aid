@@ -1,15 +1,17 @@
 // userSlice.js
 import { createSlice } from '@reduxjs/toolkit';
 import {
-  GetUser,
+  GetAllUsers,
   RegisterUser,
   UserLogin,
   Logout,
   UpdateProfile,
+  ApproveTutor,
 } from './usersAction';
 
 const initialState = {
   user: [],
+  allUsers: [],
   currentUser: null,
   error: null,
   loading: false,
@@ -21,11 +23,18 @@ const usersSlice = createSlice({
   name: 'users',
   initialState,
   reducers: {
-    setUser: (state, action) => {
+    updateUser: (state, action) => {
       state.user = action.payload; // Update the state correctly here
     },
-    updateUser: (state, action) => {
-      state.user = action.payload;
+    approval: (state, action) => {
+      state.allUsers.map((user) => {
+        if (user.id === action.payload.id) {
+          user.status = action.payload.status;
+        }
+      });
+    },
+    clearUpdateMsg: (state) => {
+      state.updateMsg = ''; // Clear the updateMsg
     },
   },
   extraReducers: (builder) => {
@@ -52,15 +61,17 @@ const usersSlice = createSlice({
       .addCase(UserLogin.rejected, (state, action) => {
         state.error = action.payload;
       })
-      .addCase(GetUser.pending, (state) => {
+      .addCase(GetAllUsers.pending, (state) => {
         state.loading = true;
         state.error = null;
       })
-      .addCase(GetUser.fulfilled, (state, action) => {
-        state.user = action.payload;
+      .addCase(GetAllUsers.fulfilled, (state, action) => {
+        state.allUsers = action.payload;
+        state.loading = false;
       })
-      .addCase(GetUser.rejected, (state, action) => {
+      .addCase(GetAllUsers.rejected, (state, action) => {
         state.error = action.payload;
+        state.loading = false;
       })
       .addCase(Logout.pending, (state) => {
         state.loading = true;
@@ -78,13 +89,25 @@ const usersSlice = createSlice({
       })
       .addCase(UpdateProfile.fulfilled, (state) => {
         state.updateMsg = 'profile updated successfully';
+        
+    
       })
       .addCase(UpdateProfile.rejected, (state, action) => {
+        state.error = action.payload;
+       
+      })
+      .addCase(ApproveTutor.pending, (state) => {
+        state.updateMsg = 'updating...';
+      })
+      .addCase(ApproveTutor.fulfilled, (state) => {
+        state.updateMsg = 'profile updated successfully';
+      })
+      .addCase(ApproveTutor.rejected, (state, action) => {
         state.error = action.payload;
         state.updateMsg = '';
       });
   },
 });
 
-export const { setUser, updateUser } = usersSlice.actions;
+export const { updateUser, approval,clearUpdateMsg } = usersSlice.actions;
 export default usersSlice.reducer;

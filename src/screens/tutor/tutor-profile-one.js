@@ -17,13 +17,15 @@ function TutorProfileOne() {
   const dispatch =useDispatch()
 
   const [image, setImage] = useState(null);
-  const [fullName, setFullName] = useState(user.details.fullName);
-  const [email, setEmail] = useState(user.details.email);
-  const [location, setLocation] = useState(user.details.profile.location);
-  const [phone, setPhone] = useState(user.details.phone);
-  const [status, setStatus] = useState(user.details.status);
+  const [fullName, setFullName] = useState(user.fullName);
+  const [email, setEmail] = useState(user.email);
+  const [location, setLocation] = useState(user.location);
+  const [phone, setPhone] = useState(user.phone);
+  const [status, setStatus] = useState(user.status);
   const [statusStyle, setStatusStyle] = useState(styles.pending);
   const navigation = useNavigation();
+
+
   const pickImage = async () => {
     // No permissions request is necessary for launching the image library
     let result = await ImagePicker.launchImageLibraryAsync({
@@ -40,15 +42,21 @@ function TutorProfileOne() {
     }
   };
 
-  useEffect(()=>{
-    dispatch(GetUser)
-  },[user])
+  // useEffect(()=>{
+  //   dispatch(GetUser)
+  // },[user])
 
 
   return (
     <View style={styles.mainContainer}>
       <Text style={styles.heading}>Teacher Profile</Text>
-      <Text style={statusStyle}>{status}</Text>
+      {status === 'approved' ? (
+            <Text style={styles.approved}>{status}</Text>
+          ) : status === 'declined' ? (
+            <Text style={styles.declined}>{status}</Text>
+          ) : (
+            <Text style={styles.pending}>{status}</Text>
+          )}
       <View style={styles.imageMajorContainer}>
         <TouchableOpacity
           onPress={pickImage}
@@ -105,6 +113,7 @@ function TutorProfileOne() {
           </View>
           <TextInput
             style={styles.allTextInput}
+            keyboardType='number-pad'
             onChangeText={(text) => setPhone(text)}
             value={phone}
           />
@@ -198,7 +207,7 @@ const styles = StyleSheet.create({
   },
 
   pending: {
-    fontSize: 17,
+    fontSize: 15,
     fontWeight: 'bold',
     color: 'orange',
   },

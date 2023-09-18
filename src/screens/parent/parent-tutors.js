@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Text,
   TouchableOpacity,
@@ -9,52 +9,45 @@ import {
 } from 'react-native';
 import TutorComponent from '../../components/tutor-component';
 import { useNavigation } from '@react-navigation/native';
+import { useSelector, useDispatch } from 'react-redux';
+import { GetAllUsers } from '../../redux/users/usersAction';
 
 const ParentTutors = () => {
   const navigation = useNavigation();
-  const tutors = [
-    {
-      name: 'Samuel Boadu',
-      location: 'Bortianor',
-      distance:17.2,
-      profile: {
-        experience: 5,
-        contact: '+233 555 788590',
-        resume: 'http://localhost/resume',
-      },
-    },
-    {
-      name: 'Vivian Baidoo',
-      location: 'Sprintex',
-      distance:39.3,
-      profile: {
-        experience: 3,
-        contact: '+233 546 789590',
-        resume: 'http://localhost/resume',
-      },
-    },
-  ];
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(GetAllUsers());
+  }, [allUsers]);
+
+  const { allUsers } = useSelector((state) => state.users);
+
+  const [location, setLocation] = useState('');
+
+  const approvedTutors = allUsers.filter(
+    (tutor) => tutor.status === 'approved' && tutor.location.toLowerCase().includes(location)
+  );
 
   const handlePressDetails = (details) => {
-    navigation.navigate(details);
+    navigation.navigate(details.link, details.data);
   };
 
   return (
     <View style={styles.mainContainer}>
-      <TextInput placeholder='enter location to filter tutors' style={styles.locationSearch} />
+      <TextInput
+        placeholder="enter location to filter tutors"
+        style={styles.locationSearch}
+        onChangeText={(text) => setLocation(text.toLowerCase())}
+      />
       <FlatList
-        data={tutors}
+        data={approvedTutors}
         renderItem={({ item }) => {
           return (
-           
-              <TutorComponent
-                name={item.name}
-                profile={item.profile}
-                location={item.location}
-                distance={item.distance}
-                onPressDetails={handlePressDetails}
-              />
-        
+            <TutorComponent
+              info={item}
+              distance={'20'}
+              onPressDetails={handlePressDetails}
+            />
           );
         }}
       />
@@ -71,15 +64,15 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-start',
     alignItems: 'stretch',
   },
-  locationSearch:{
-    borderStyle:'solid',
-    borderWidth:1,
+  locationSearch: {
+    borderStyle: 'solid',
+    borderWidth: 1,
     borderColor: '#bbb',
-    borderRadius:5,
-    fontSize:16,
-    paddingHorizontal:5,
-    marginVertical:5,
-  }
+    borderRadius: 5,
+    fontSize: 16,
+    paddingHorizontal: 5,
+    marginVertical: 5,
+  },
 });
 
 export default ParentTutors;

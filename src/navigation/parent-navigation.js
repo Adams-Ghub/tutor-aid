@@ -62,7 +62,7 @@ function ParentNavigation({ navigation }) {
     [logged,dispatch]
   );
 
-  const displayName = logged ? user.details.fullName.split(' ') : '';
+  const displayName = logged ? user.fullName.split(' ') : '';
 
   return (
     <Drawer.Navigator
@@ -106,7 +106,7 @@ function ParentNavigation({ navigation }) {
                 style={{
                   padding: 0,
                   fontWeight: '600',
-                  fontSize: 16,
+                  fontSize: 14,
                   marginRight: 15,
                   width: 50,
                 }}

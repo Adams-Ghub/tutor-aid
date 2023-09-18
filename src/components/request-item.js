@@ -2,31 +2,43 @@ import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { useNavigation } from '@react-navigation/core';
 
-function RequestItem({ parent, location, distance, students }) {
-
+function RequestItem({ info, distance }) {
   const navigation = useNavigation();
 
   return (
     <View style={styles.principalContainer}>
       <View style={styles.parentLocDistanceContainer}>
-        <Text style={styles.parentText}>{parent} </Text>
-        <Text style={styles.locationDistanceText}>{location + ' '}</Text>
-        <Text style={styles.locationDistanceText}>{distance+' km'}</Text>
+        <Text style={styles.parentText}>{info.parent} </Text>
+        <View style={styles.locationDistanceContainer}>
+          <Text style={styles.locationDistanceText}>{info.location + ' '}</Text>
+          <Text style={styles.locationDistanceText}>{distance + ' km'}</Text>
+        </View>
       </View>
       <View style={styles.studentsDetailsContainer}>
         <Text style={styles.studentsQtyClassTexts}>
-          {students.length < 2
-            ? students.length + ' student'
-            : students.length + ' students'}{' '}
-          {students.length < 2
-            ? '(' + students[0].class + ')'
-            : '(' + students[0].class + ', ' + students[1].class + ')'}
+          {info.wards.length < 2
+            ? info.wards.length + ' student'
+            : info.wards.length + ' students'}{' '}
+          {info.wards.length < 2
+            ? '(' + info.wards[0].class + ')'
+            : '(' + info.wards[0].class + ', ' + info.wards[1].class + ')'}
         </Text>
       </View>
-      <View style={styles.dateContainer}>
-        <TouchableOpacity onPress={()=>navigation.navigate('details')}>
+      <View style={styles.dateStatusContainer}>
+        <TouchableOpacity
+          onPress={() =>
+            navigation.navigate('details', { data: { info, distance } })
+          }
+        >
           <Text style={styles.detailsText}>details</Text>
         </TouchableOpacity>
+        {info.status === 'accepted' ? (
+          <Text style={[styles.accepted, styles.status]}>{info.status}</Text>
+        ) : info.status === 'declined' ? (
+          <Text style={[styles.declined, styles.status]}>{info.status}</Text>
+        ) : (
+          <Text style={[styles.pending, styles.status]}>{info.status}</Text>
+        )}
       </View>
     </View>
   );
@@ -37,12 +49,10 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: 'column',
     justifyContent: 'flex-start',
-    alignItems: 'flex-start',
     backgroundColor: '#ccc',
     borderRadius: 5,
     marginVertical: 5,
     padding: 5,
-    width: '100%',
   },
 
   parentLocDistanceContainer: {
@@ -50,20 +60,42 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
 
-  parentText: {
-    fontSize: 22,
+  locationDistanceContainer: {
+    flexDirection: 'row',
+    alignSelf: 'flex-end',
+  },
+
+  status: {
+    alignSelf: 'flex-end',
+    fontSize: 16,
     fontWeight: 'bold',
-    width:250,
-    marginRight: '2%',
+    marginBottom: 8,
+  },
+  pending: {
+    color: 'orange',
+  },
+  accepted: {
+    color: 'green',
+  },
+  declined: {
+    color: 'red',
+  },
+
+  parentText: {
+    fontSize: 20,
+    fontWeight: 'bold',
   },
 
   locationDistanceText: {
     alignSelf: 'flex-end',
   },
-  studentsDetailsContainer: {},
-  dateContainer: {
-    flex: 0.23,
+  studentsDetailsContainer: {
     alignSelf: 'flex-start',
+  },
+  dateStatusContainer: {
+    flex: 0.23,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
     marginTop: 4,
   },
   studentsQtyClassTexts: {
@@ -75,11 +107,11 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#000',
   },
-  detailsText:{
-    color:'#3944bc',
+  detailsText: {
+    color: '#3944bc',
     fontSize: 16,
-    fontWeight:'600'
-  }
+    fontWeight: '600',
+  },
 });
 
 export default RequestItem;

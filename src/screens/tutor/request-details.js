@@ -8,94 +8,69 @@ import {
   ScrollView,
   Alert,
 } from 'react-native';
+import { useRoute } from '@react-navigation/native';
+import { useDispatch, useSelector } from 'react-redux';
+import { AcceptRequest } from '../../redux/requests/requestsActions';
+import { acceptReqUpdate } from '../../redux/requests/requestsSlice';
 
 function RequestDetails() {
-  const [parentName, setParentName] = useState('Ronney Owusu Yeboah');
-  const [location, setLocation] = useState('Kasoa');
-  const [ward, setWard] = useState('John Owusu Yeboah');
-  const [contact, setContact] = useState('+233 567897903');
-  const [distance, setDistance] = useState('17.2');
-  const [stage, setStage] = useState('Basic 2');
-  const [tutorEducation, setTutorEducation] = useState('');
-  const [notes, setNotes] = useState('');
-  const [tutorSummary, setTutorSummary] = useState('');
-  const [tutorResumeLink, setTutorResumeLink] = useState('');
+  const data = useRoute().params.data;
+  const dispatch = useDispatch();
 
-  const handleSubmit = () => {
-    if (
-      !parentName ||
-      !location ||
-      !tutorEducation ||
-      !notes ||
-      !tutorSummary ||
-      !tutorResumeLink
-    ) {
-      Alert.alert('All fields are required');
-      return;
-    }
+  const [notes, setNotes] = useState(data.info.notes);
+  const [status, setStatus] = useState(data.info.status);
 
-    // Create the tutor object here as you were doing
-
-    // Clear the form fields after submission:
-    setParentName('');
-    setLocation('');
-    setTutorEducation('');
-    setNotes('');
-    setTutorSummary('');
-    setTutorResumeLink('');
+  const handleAccept = () => {
+    setStatus('accepted');
+    const datum ={ id: data.info.id, status }
+    dispatch(AcceptRequest(datum));
+    dispatch(acceptReqUpdate(payload={ id: data.info.id, status }));
+     
   };
+
 
   return (
     <ScrollView style={styles.container}>
       <Text style={styles.header}>Parent Request Details</Text>
       <View style={styles.infoContainer}>
+        {status === 'accepted' ? (
+          <Text style={[styles.accepted, styles.status]}>{status}</Text>
+        ) : status === 'declined' ? (
+          <Text style={[styles.declined, styles.status]}>{status}</Text>
+        ) : (
+          <Text style={[styles.pending, styles.status]}>{status}</Text>
+        )}
         <View style={styles.labelInputContainer}>
           <Text style={styles.label}>Parent:</Text>
-          <Text style={styles.text}>{parentName}</Text>
+          <Text style={styles.text}>{data.info.parent}</Text>
         </View>
         <View style={styles.labelInputContainer}>
           <Text style={styles.label}>Contact:</Text>
-          <Text style={styles.text}>{contact}</Text>
+          <Text style={styles.text}>{data.info.phone}</Text>
         </View>
         <View style={styles.labelInputContainer}>
           <Text style={styles.label}>Location:</Text>
-          <Text style={styles.text}>{location}</Text>
+          <Text style={styles.text}>{data.info.location}</Text>
         </View>
         <View style={styles.labelInputContainer}>
           <Text style={styles.label}>Distance:</Text>
-          <Text style={styles.text}>{distance + ' km'}</Text>
+          <Text style={styles.text}>{data.distance + ' km'}</Text>
         </View>
 
-        <View style={styles.wardInfoContainer}>
-          <View style={styles.wardLabelInputContainer}>
-            <Text style={styles.label}>Ward:</Text>
-            <Text style={styles.text}>{ward}</Text>
-          </View>
-          <View style={styles.classLabelInputContainer}>
-            <Text style={styles.label}>Class:</Text>
-            <Text style={styles.text}>{stage}</Text>
-          </View>
-        </View>
-        <View style={styles.wardInfoContainer}>
-          <View style={styles.wardLabelInputContainer}>
-            <Text style={styles.label}>Ward:</Text>
-            <Text style={styles.text}>{ward}</Text>
-          </View>
-          <View style={styles.classLabelInputContainer}>
-            <Text style={styles.label}>Class:</Text>
-            <Text style={styles.text}>{stage}</Text>
-          </View>
-        </View>
-        <View style={styles.wardInfoContainer}>
-          <View style={styles.wardLabelInputContainer}>
-            <Text style={styles.label}>Ward:</Text>
-            <Text style={styles.text}>{ward}</Text>
-          </View>
-          <View style={styles.classLabelInputContainer}>
-            <Text style={styles.label}>Class:</Text>
-            <Text style={styles.text}>{stage}</Text>
-          </View>
-        </View>
+        {data.info.wards.map((student, index) => {
+          return (
+            <View style={styles.wardInfoContainer}>
+              <View style={styles.wardLabelInputContainer}>
+                <Text style={styles.label}>Ward {index + 1}:</Text>
+                <Text style={styles.text}>{student.student}</Text>
+              </View>
+              <View style={styles.classLabelInputContainer}>
+                <Text style={styles.label}>Class:</Text>
+                <Text style={styles.text}>{student.class}</Text>
+              </View>
+            </View>
+          );
+        })}
 
         <View style={styles.labelNoteInputContainer}>
           <Text style={styles.label}>Notes:</Text>
@@ -109,11 +84,12 @@ function RequestDetails() {
             textAlignVertical="top"
           />
         </View>
+
         <View style={styles.acceptDeclineBtnsContainer}>
-          <TouchableOpacity style={styles.submitButton} onPress={handleSubmit}>
+          <TouchableOpacity style={styles.submitButton} onPress={handleAccept}>
             <Text style={styles.submitButtonText}>Accept</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.submitButton} onPress={handleSubmit}>
+          <TouchableOpacity style={styles.submitButton}>
             <Text style={styles.submitButtonText}>Decline</Text>
           </TouchableOpacity>
         </View>
@@ -140,6 +116,21 @@ const styles = StyleSheet.create({
     padding: 15,
     elevation: 3,
     flex: 1,
+  },
+  status: {
+    alignSelf: 'flex-end',
+    fontSize: 16,
+    fontWeight: 'bold',
+    marginBottom: 8,
+  },
+  pending: {
+    color: 'orange',
+  },
+  accepted: {
+    color: 'green',
+  },
+  declined: {
+    color: 'red',
   },
   labelInputContainer: {
     flexDirection: 'row',

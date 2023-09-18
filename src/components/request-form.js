@@ -8,10 +8,16 @@ import {
   ScrollView,
   Alert,
 } from 'react-native';
-
+import { useRoute } from '@react-navigation/native';
+import { useDispatch, useSelector } from 'react-redux';
+import * as Crypto from 'expo-crypto';
+import { MakeRequests } from '../redux/requests/requestsActions';
 
 function RequestForm() {
-  const [tutorName, setTutorName] = useState('');
+  const tutorInfo = useRoute().params.data;
+  const dispatch = useDispatch();
+
+  const [tutorName, setTutorName] = useState(tutorInfo.name);
   const [tutorLocation, setTutorLocation] = useState('');
   const [wardOneName, setWardOneName] = useState('');
   const [wardOneClass, setWardOneClass] = useState('');
@@ -19,48 +25,68 @@ function RequestForm() {
   const [wardTwoClass, setWardTwoClass] = useState('');
   const [wardThreeName, setWardThreeName] = useState('');
   const [wardThreeClass, setWardThreeClass] = useState('');
-  const [tutorEducation, setTutorEducation] = useState(''); // Added tutorEducation state
   const [notes, setNotes] = useState(''); // Added Notes state
-  const [tutorSummary, setTutorSummary] = useState('');
-  const [tutorResumeLink, setTutorResumeLink] = useState('');
+
+  const { user } = useSelector((state) => state.users);
 
   const handleSubmit = () => {
-    if (
-      !tutorName ||
-      !tutorLocation ||
-      !tutorEducation || // Check for tutorEducation
-      !Notes || // Check for Notes
-      !tutorSummary ||
-      !tutorResumeLink
-    ) {
-      Alert.alert('All fields are required');
+    if (!user || !user.id) {
+      // Handle the case where user is undefined or doesn't have an id
+      console.error("User is undefined or missing 'id'.");
+      // You can display an error message or take appropriate action here
       return;
     }
 
-    // Here, you can perform actions like sending the tutor information to a server or updating state.
-
-    // For example, you can update the tutor state like this:
-    const tutor = {
-      name: tutorName,
-      location: tutorLocation,
-      profile: {
-        education: tutorEducation,
-        experience: 3, // You can set the experience to an appropriate value.
-        contact: '', // Add the contact information if needed.
-        resume: tutorResumeLink,
-      },
+    const ward = [{ student: wardOneName, class: wardOneClass }];
+    wardTwoName === '' || wardTwoClass === ''
+      ? null
+      : ward.push({ student: wardTwoName, class: wardTwoClass });
+    wardThreeName === '' || wardThreeClass === ''
+      ? null
+      : ward.push({ student: wardThreeName, class: wardThreeClass });
+    const request = {
+      id: Crypto.randomUUID().slice(-12),
+      parent: user.fullName,
+      parentId: user.id,
+      tutor: tutorInfo.name,
+      tutorId: tutorInfo.id,
+      location: user.location,
+      phone: user.phone,
+      notes: notes,
+      long: '2222',
+      lat: '3333',
+      distance: '39.2',
+      wards: ward,
     };
 
-    // Now, you can use the 'tutor' object as needed.
+    console.log('location:', user);
 
-    // Clear the form fields after submission:
-    setTutorName('');
-    setTutorLocation('');
-    setTutorEducation('');
+    if (user.location === '' || user.phone === '') {
+      // Handle the case where user is undefined or doesn't have an id
+      alert(
+        'Kindly complete your profile with at least location, contact, email, code to make a request'
+      );
+      // You can display an error message or take appropriate action here
+    } else {
+      dispatch(MakeRequests(request));
+    
+
+    setWardOneClass('');
+    setWardOneName('');
+    setWardTwoClass('');
+    setWardTwoName('');
+    setWardThreeClass('');
+    setWardThreeName('');
     setNotes('');
-    setTutorSummary('');
-    setTutorResumeLink('');
+    }
   };
+
+  /* 
+    src/screens/tutor/tutor-requests.js
+    */
+  // Now, you can use the 'tutor' object as needed.
+
+  // Clear the form fields after submission:
 
   return (
     <ScrollView style={styles.container}>
@@ -70,11 +96,12 @@ function RequestForm() {
           style={styles.input}
           placeholder="Tutor Name"
           value={tutorName}
+          editable={false}
           onChangeText={(text) => setTutorName(text)}
         />
         <TextInput
           style={styles.input}
-          placeholder="Location"
+          placeholder="Enter your location"
           value={tutorLocation}
           onChangeText={(text) => setTutorLocation(text)}
         />
@@ -144,7 +171,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingVertical: 20,
     flexDirection: 'column',
-    
   },
   header: {
     fontSize: 20,
@@ -164,7 +190,8 @@ const styles = StyleSheet.create({
     borderColor: '#333',
     marginBottom: 18,
     width: '100%',
-    marginBottom:30,
+    marginBottom: 30,
+    color: '#000',
   },
   wardNameInput: {
     fontSize: 16,
@@ -175,9 +202,9 @@ const styles = StyleSheet.create({
   },
   noteInput: {
     fontSize: 16,
-    padding:4,
+    padding: 4,
     borderWidth: 1,
-    borderRadius:5,
+    borderRadius: 5,
     borderColor: '#333',
     marginVertical: 25,
     width: '100%',
@@ -201,7 +228,6 @@ const styles = StyleSheet.create({
     color: 'white',
     fontSize: 15,
     fontWeight: 'normal',
-    
   },
   wardInfoContainer: {
     flexDirection: 'row',

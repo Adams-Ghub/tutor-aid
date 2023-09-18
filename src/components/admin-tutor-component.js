@@ -1,8 +1,12 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
 import profileImage from '../../assets/profile.png';
+import { useNavigation } from '@react-navigation/native';
 
-const AdminTutorComponent = ({ name, profile, location,distance, onPressDetails }) => {
+const AdminTutorComponent = ({ info, distance }) => {
+
+  const navigation = useNavigation();
+
   return (
     <View style={styles.mainContainer}>
       <View style={styles.imageContainer}>
@@ -10,18 +14,31 @@ const AdminTutorComponent = ({ name, profile, location,distance, onPressDetails 
       </View>
       <View style={styles.infoContainer}>
         <View style={styles.nameExperienceContainer}>
-          <Text style={styles.fullNameText}>{name}</Text>
-          <Text style={styles.experienceText}>{profile.experience} yrs</Text>
+          <Text style={styles.fullNameText}>{info.fullName}</Text>
+          <Text style={styles.experienceText}>
+            {info.profile.experience} yrs
+          </Text>
         </View>
         <View style={styles.contactLocationContainer}>
-          <Text style={styles.contactText}>{profile.contact}</Text>
+          <Text style={styles.contactText}>{info.phone}</Text>
           <View style={styles.locationDistanceContainer}>
-            <Text style={styles.locationText}>{location}</Text>
-            <Text style={styles.locationText}>{distance+"km"}</Text>
+            <Text style={styles.locationText}>{info.location}</Text>
+            <Text style={styles.locationText}>{distance + 'km'}</Text>
           </View>
         </View>
-        <View>
-          <TouchableOpacity onPress={() => onPressDetails('ProfileDetails')}>
+        <View style={styles.statusDetailsBtnContainer}>
+          {info.status === 'approved' ? (
+            <Text style={styles.approved}>{info.status}</Text>
+          ) : info.status === 'declined' ? (
+            <Text style={styles.declined}>{info.status}</Text>
+          ) : (
+            <Text style={styles.pending}>{info.status}</Text>
+          )}
+          <TouchableOpacity
+            onPress={() =>
+              navigation.navigate('ProfileDetails', { data: info })
+            }
+          >
             <Text style={styles.detailsLinkText}>details</Text>
           </TouchableOpacity>
         </View>
@@ -60,6 +77,21 @@ const styles = StyleSheet.create({
   infoContainer: {
     flex: 1,
   },
+  pending: {
+    fontSize: 17,
+    fontWeight: 'bold',
+    color: 'orange',
+  },
+  approved: {
+    fontSize: 17,
+    fontWeight: 'bold',
+    color: 'green',
+  },
+  declined: {
+    fontSize: 17,
+    fontWeight: 'bold',
+    color: 'red',
+  },
   nameExperienceContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -68,6 +100,12 @@ const styles = StyleSheet.create({
   fullNameText: {
     fontSize: 20,
     fontWeight: 'bold',
+  },
+  statusDetailsBtnContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginTop: 5,
   },
   experienceText: {
     fontSize: 16,
@@ -94,10 +132,10 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     marginTop: 8,
   },
-  locationDistanceContainer:{
-    flexDirection:'row',
+  locationDistanceContainer: {
+    flexDirection: 'row',
     gap: 4,
-  }
+  },
 });
 
 export default AdminTutorComponent;

@@ -1,59 +1,63 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import InfoHeader from './info-header';
+import { useRoute } from '@react-navigation/native';
 
-function TutorDetails({navigation}) {
+function TutorDetails({ navigation }) {
   const tutor = {
-    name: 'Samuel Boadu',
+    fullName: 'Samuel Boadu',
     location: 'Kasoa',
     distance: 17.2,
     profile: {
       experience: 5,
-      contact: '+233 555 788590',
+      phone: '+233 555 788590',
       resume: 'https://localhost/resume',
     },
   };
+
+  const info = useRoute().params.info;
+
+  console.log('info:', info);
 
   return (
     <View style={styles.container}>
       <Text style={styles.header}>Professional Info</Text>
       <View style={styles.headerContainer}>
-        <InfoHeader
-          name={tutor.name}
-          location={tutor.location}
-          profile={tutor.profile}
-          distance={tutor.distance}
-        />
+        <InfoHeader info={info} distance={8} />
       </View>
       <View style={styles.infoContainer}>
         <View style={styles.infoItem}>
           <Text style={styles.label}>Education:</Text>
-          <Text style={styles.value}>BEd. Basic Education</Text>
+          <Text style={styles.value}>{info.profile.education}</Text>
         </View>
 
         <View style={styles.infoItem}>
           <Text style={styles.label}>Subjects:</Text>
-          <Text style={styles.value}>English, Maths, Science</Text>
+          <Text style={styles.value}>{info.profile.subjects}</Text>
         </View>
 
         <View style={styles.profSummarySection}>
           <Text style={styles.label}>Professional Summary:</Text>
-          <Text style={styles.value}>
-            A passionate tutor with over five years of experience teaching basic
-            school children
-          </Text>
+          <Text style={styles.value}>{info.profile.profSummary}</Text>
         </View>
 
         <View style={styles.infoItem}>
           <Text style={styles.label}>Resume link:</Text>
-          <Text style={styles.link}>https://localhost/resume</Text>
+          <Text style={styles.link}>{info.profile.resume}</Text>
         </View>
         <View style={styles.infoItem}>
           <Text style={styles.label}>Rate per month:</Text>
-          <Text style={styles.value}>GHS 300</Text>
+          <Text style={styles.value}>{'GHS ' + info.profile.rate}</Text>
         </View>
 
-        <TouchableOpacity style={styles.requestButton} onPress={()=>navigation.navigate('RequestForm')} >
+        <TouchableOpacity
+          style={styles.requestButton}
+          onPress={() =>
+            navigation.navigate('RequestForm', {
+              data: { id: info.id, name: info.fullName },
+            })
+          }
+        >
           <Text style={styles.requestButtonText}>Request</Text>
         </TouchableOpacity>
       </View>
@@ -91,28 +95,26 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
     alignItems: 'flex-start',
     justifyContent: 'flex-start',
-    marginTop:18,
+    marginTop: 18,
     marginBottom: 10,
-   
   },
   headerContainer: {
-  
     shadowColor: '#000',
     borderWidth: 2,
     borderColor: '#ddd',
-    borderRadius:10,
+    borderRadius: 10,
   },
   label: {
     fontSize: 16,
     fontWeight: 'bold',
-    borderStyle:'solid',
+    borderStyle: 'solid',
     borderBottomWidth: 1,
     borderBlockColor: '#333333',
-    width:'100%'
+    width: '100%',
   },
   value: {
     fontSize: 16,
-    alignSelf:'flex-start'
+    alignSelf: 'flex-start',
   },
   link: {
     color: 'blue',
@@ -126,7 +128,7 @@ const styles = StyleSheet.create({
     marginTop: 10, // Reduce the spacing between the button and the previous item
     alignSelf: 'flex-start', // Align the button to the left
     width: '25%', // Reduce the width of the button
-    alignSelf:'center', // Align the button to the
+    alignSelf: 'center', // Align the button to the
   },
   requestButtonText: {
     color: 'white',
