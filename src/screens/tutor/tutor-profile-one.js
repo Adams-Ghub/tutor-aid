@@ -10,7 +10,7 @@ import {
   Image,
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import { GetUser } from '../../redux/users/usersAction';
+import { GetUser, listenToProfileUpdate } from '../../redux/users/usersAction';
 
 function TutorProfileOne() {
   const { user } = useSelector((state) => state.users);
@@ -42,9 +42,15 @@ function TutorProfileOne() {
     }
   };
 
-  // useEffect(()=>{
-  //   dispatch(GetUser)
-  // },[user])
+  useEffect(() => {
+    const unsubscribe = dispatch(listenToProfileUpdate());
+
+    return () => {
+      // Clean up the listener when the component unmounts
+      unsubscribe();
+    };
+  }, [dispatch]);
+
 
 
   return (

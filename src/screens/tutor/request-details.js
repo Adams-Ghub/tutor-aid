@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState,useEffect } from 'react';
 import {
   View,
   Text,
@@ -10,7 +10,7 @@ import {
 } from 'react-native';
 import { useRoute } from '@react-navigation/native';
 import { useDispatch, useSelector } from 'react-redux';
-import { AcceptRequest } from '../../redux/requests/requestsActions';
+import { AcceptRequest, listenToRequestUpdate } from '../../redux/requests/requestsActions';
 import { acceptReqUpdate } from '../../redux/requests/requestsSlice';
 
 function RequestDetails() {
@@ -22,11 +22,20 @@ function RequestDetails() {
 
   const handleAccept = () => {
     setStatus('accepted');
-    const datum ={ id: data.info.id, status }
+    const datum ={ id: data.info.id, status:'accepted' }
     dispatch(AcceptRequest(datum));
     dispatch(acceptReqUpdate(payload={ id: data.info.id, status }));
      
   };
+
+  useEffect(() => {
+    const unsubscribe = dispatch(listenToRequestUpdate());
+
+    return () => {
+      // Clean up the listener when the component unmounts
+      unsubscribe();
+    };
+  }, [dispatch]);
 
 
   return (

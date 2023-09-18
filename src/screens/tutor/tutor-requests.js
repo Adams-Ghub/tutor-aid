@@ -9,7 +9,7 @@ import {
 } from 'react-native';
 import RequestItem from '../../components/request-item';
 import { useDispatch, useSelector } from 'react-redux';
-import { GetRequests } from '../../redux/requests/requestsActions';
+import { GetRequests, listenToRequestUpdate } from '../../redux/requests/requestsActions';
 
 const TutorRequests = () => {
   const Requests = [
@@ -53,14 +53,24 @@ const TutorRequests = () => {
 
   useEffect(() => {
     dispatch(GetRequests());
-  }, [requests]);
+  }, []);
+
+  useEffect(() => {
+    const unsubscribe = dispatch(listenToRequestUpdate());
+
+    return () => {
+      // Clean up the listener when the component unmounts
+      unsubscribe();
+    };
+  }, [dispatch]);
+
 
   const { requests } = useSelector((state) => state.requests);
   const { user } = useSelector((state) => state.users);
   let filtered= [];
   requests?filtered= requests.filter((request) => request.tutorId === user.id):null;
 
-
+console.log('requests:',requests)
 
   return (
     <View style={styles.mainContainer}>
