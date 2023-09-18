@@ -27,19 +27,47 @@ export const RegisterUser = createAsyncThunk(
           // Signed in
           user = userCredential.user;
 
-          setDoc(doc(db, 'users', user.uid), {
-            id: user.uid,
-            role,
-            fullName,
-            photo: 'unknown',
-            phone: '',
-            profile: {},
-          });
+          setDoc(
+            doc(db, 'users', user.uid),
+            role === 'tutor'
+              ? {
+                  id: user.uid,
+                  role,
+                  fullName,
+                  email,
+                  photo: '',
+                  phone: '',
+                  profile: {
+                    education: '',
+                    lat: '',
+                    location: '',
+                    long: '',
+                    profSummary: '',
+                    rate: '',
+                    resume: '',
+                    subjects: '',
+                    experience: '',
+                  },
+                  status: 'pending',
+                }
+              : {
+                  email,
+                  fullName,
+                  id: user.uid,
+                  phone: '',
+                  photo: '',
+                  location: '',
+                  lat: '',
+                  long: '',
+                  role,
+                }
+          );
         }
       );
       return user;
     } catch (error) {
       thunkAPI.rejectWithValue(error);
+      alert(error.message);
     }
   }
 );
@@ -57,12 +85,10 @@ export const UserLogin = createAsyncThunk(
           loggedUser = { email: user.email, id: user.uid };
           const docRef = doc(db, 'users', user.uid);
           const docSnap = await getDoc(docRef);
-          console.log('data:', docSnap.data());
+
           const data = docSnap.data();
           if (data) {
-            loggedUser = { ...loggedUser, details: data };
-          } else {
-            loggedUser = { ...loggedUser, details: [] };
+            loggedUser = data;
           }
         }
       );
@@ -98,50 +124,108 @@ const unsubscribe = onSnapshot(q, (querySnapshot) => {
 });
 */
 
-export const GetUser = createAsyncThunk(
-  'user/getUser',
-  async ({id}, thunkAPI) => {
+export const GetAllUsers = createAsyncThunk(
+  'user/getUsers',
+  async (_, thunkAPI) => {
     try {
       const userData = [];
-      const q = query(collection(db, 'users'),where("id", "==", id));
-      const unsubscribe = onSnapshot(q, (querySnapshot) => {
-        querySnapshot.forEach((doc) => {
-          userData.push(doc.data());
-        });
-      });
 
+      const querySnapshot = await getDocs(collection(db, 'users'));
+      querySnapshot.forEach((doc) => {
+        // doc.data() is never undefined for query doc snapshots
+        console.log(doc.id, ' => ', doc.data());
+        userData.push(doc.data());
+      });
       return userData;
     } catch (error) {
+      alert(error.message);
       throw error;
     }
   }
 );
 
+// export const GetAllUsers = createAsyncThunk(
+//   'user/getUsers',
+//   async (_, thunkAPI) => {
+//     try {
+//       const userData = [];
+
+//       // Use onSnapshot to listen to changes in the 'users' collection
+//       const querySnapshot = await onSnapshot(collection(db, 'users'), (snapshot) => {
+//         snapshot.forEach((doc) => {
+//           // doc.data() is never undefined for query doc snapshots
+//           console.log(doc.id, ' => ', doc.data());
+//           userData.push(doc.data());
+//         });
+//       });
+
+//       // Wait for the onSnapshot promise to resolve before returning the userData array
+//       await querySnapshot;
+
+//       return userData;
+//     } catch (error) {
+//       alert(error.message);
+//       throw error;
+//     }
+//   }
+// );
+
 export const UpdateProfile = createAsyncThunk(
   'profile-update',
-  async ({ data }, thunkAPI) => {
+  async (data, thunkAPI) => {
     try {
       const profile = doc(db, 'users', data.id);
 
+      await updateDoc(
+        profile,
+        data.role === 'tutor'
+          ? {
+              email: data.email,
+              fullName: data.name,
+              id: data.id,
+              phone: data.phone,
+              photo: 'link',
+              lat: data.lat || '',
+              long: data.long || '',
+              location: data.location,
+              profile: {
+                education: data.education,
+                profSummary: data.profSummary,
+                rate: data.rate,
+                resume: data.resume,
+                subjects: data.subjects,
+                experience: data.experience,
+              },
+              role: data.role,
+              status: data.status,
+            }
+          : {
+              email: data.email,
+              fullName: data.fullName,
+              id: data.id,
+              phone: data.phone,
+              photo: 'link',
+              location: data.location,
+              lat: data.lat || '',
+              long: data.long || '',
+              role: data.role,
+            }
+      );
+    } catch (error) {
+      alert(error.message);
+      throw error;
+    }
+  }
+);
+
+export const ApproveTutor = createAsyncThunk(
+  'Approve',
+  async ({ id, status }, thunkAPI) => {
+    try {
+      const profile = doc(db, 'users', id);
+
       await updateDoc(profile, {
-        email: data.email,
-        fullName: data.name,
-        id: data.id,
-        phone: data.phone,
-        photo: 'link',
-        profile: {
-          education: data.education,
-          lat: data.lat || '',
-          location: data.location,
-          long: data.long || '',
-          profSummary: data.profSummary,
-          rate: data.rate,
-          resume: data.resume,
-          subjects: data.subjects,
-          experience: data.experience,
-        },
-        role: data.role,
-        status: data.status,
+        status: status,
       });
     } catch (error) {
       alert(error.message);
