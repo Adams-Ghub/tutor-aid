@@ -79,7 +79,8 @@ function TutorNavigation({ navigation }) {
     dispatch
   );
 
-  const displayName = logged ? user.details.fullName.split(' ') : '';
+  const displayName = logged ? user.fullName.split(' ') : '';
+
   return (
     <Drawer.Navigator
       screenOptions={{
@@ -124,7 +125,7 @@ function TutorNavigation({ navigation }) {
                   marginBottom: 0,
                   padding: 0,
                   fontWeight: '600',
-                  fontSize: 16,
+                  fontSize: 14,
                   width: 50,
                 }}
               >
