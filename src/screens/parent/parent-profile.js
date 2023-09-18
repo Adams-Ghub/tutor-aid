@@ -11,7 +11,7 @@ import {
 } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux';
 import { updateUser } from '../../redux/users/usersSlice';
-import { UpdateProfile } from '../../redux/users/usersAction';
+import { UpdateProfile, listenToProfileUpdate } from '../../redux/users/usersAction';
 
 function ParentProfile() {
   const dispatch = useDispatch();
@@ -35,9 +35,17 @@ function ParentProfile() {
     };
 
     dispatch(UpdateProfile(data));
-    dispatch(updateUser(data))
+    
   };
 
+  useEffect(() => {
+    const unsubscribe = dispatch(listenToProfileUpdate());
+
+    return () => {
+      // Clean up the listener when the component unmounts
+      unsubscribe();
+    };
+  }, [dispatch]);
 
 
   const pickImage = async () => {

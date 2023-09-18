@@ -8,7 +8,7 @@ import {
 } from 'react-native';
 import AdminTutorComponent from '../../components/admin-tutor-component';
 import { useNavigation } from '@react-navigation/native';
-import {GetAllUsers} from '../../redux/users/usersAction';
+import {GetAllUsers, listenToProfileUpdate} from '../../redux/users/usersAction';
 import {useDispatch, useSelector} from 'react-redux'
 
 const Registrations = () => {
@@ -20,7 +20,18 @@ const Registrations = () => {
     dispatch(GetAllUsers())
    },[]);
 
-  const userTutors=allUsers.filter((tutor)=>tutor.role==='tutor');
+   useEffect(() => {
+    const unsubscribe = dispatch(listenToProfileUpdate());
+
+    return () => {
+      // Clean up the listener when the component unmounts
+      unsubscribe();
+    };
+  }, [dispatch]);
+
+
+  const Tutors=allUsers
+  const userTutors=Tutors.filter((tutor)=>tutor.role==='tutor');
 
   console.log("tutors", userTutors)
 
