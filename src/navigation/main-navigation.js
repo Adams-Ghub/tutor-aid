@@ -15,13 +15,13 @@ function MainNavigation() {
   return (
     <Stack.Navigator>
       {logged ? (
-        user.details.role === 'admin' ? (
+        user.role === 'admin' ? (
           <Stack.Screen
             name="AdminWelcome"
             component={AdminNavigation}
             options={{ header: () => {} }}
           />
-        ) : user.details.role === 'parent' ? (
+        ) : user.role === 'parent' ? (
           <Stack.Screen
             name="ParentWelcome"
             component={ParentNavigation}
