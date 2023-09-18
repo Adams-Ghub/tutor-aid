@@ -10,7 +10,10 @@ import {
 import TutorComponent from '../../components/tutor-component';
 import { useNavigation } from '@react-navigation/native';
 import { useSelector, useDispatch } from 'react-redux';
-import { GetAllUsers } from '../../redux/users/usersAction';
+import {
+  GetAllUsers,
+  listenToProfileUpdate,
+} from '../../redux/users/usersAction';
 
 const ParentTutors = () => {
   const navigation = useNavigation();
@@ -20,12 +23,23 @@ const ParentTutors = () => {
     dispatch(GetAllUsers());
   }, [allUsers]);
 
+  useEffect(() => {
+    const unsubscribe = dispatch(listenToProfileUpdate());
+
+    return () => {
+      // Clean up the listener when the component unmounts
+      unsubscribe();
+    };
+  }, [dispatch]);
+
   const { allUsers } = useSelector((state) => state.users);
 
   const [location, setLocation] = useState('');
 
   const approvedTutors = allUsers.filter(
-    (tutor) => tutor.status === 'approved' && tutor.location.toLowerCase().includes(location)
+    (tutor) =>
+      tutor.status === 'approved' &&
+      tutor.location.toLowerCase().includes(location)
   );
 
   const handlePressDetails = (details) => {
