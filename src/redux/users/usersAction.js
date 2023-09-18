@@ -16,6 +16,7 @@ import {
   query,
 } from 'firebase/firestore';
 import { auth, db } from '../../firebase/firebase.js';
+import { updateUser } from './usersSlice.js';
 
 export const RegisterUser = createAsyncThunk(
   'user/register',
@@ -64,7 +65,7 @@ export const RegisterUser = createAsyncThunk(
           );
         }
       );
-      return user;
+      return [{ email: user.email, id: user.uid }];
     } catch (error) {
       thunkAPI.rejectWithValue(error);
       alert(error.message);
@@ -233,3 +234,19 @@ export const ApproveTutor = createAsyncThunk(
     }
   }
 );
+
+//Listener actions
+
+export const listenToProfileUpdate = () => (dispatch) => {
+  const firestoreCollection = collection(db, 'users');
+
+  const unsubscribe = onSnapshot(firestoreCollection, (snapshot) => {
+    const data = snapshot.docs.map((doc) => ({
+      ...doc.data(),
+    }));
+    dispatch(updateUser(data));
+  });
+
+  // Clean up the listener when needed
+  return () => unsubscribe();
+};
