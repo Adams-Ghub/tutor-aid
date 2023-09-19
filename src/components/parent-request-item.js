@@ -2,23 +2,25 @@ import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { useNavigation } from '@react-navigation/core';
 import { useSelector } from 'react-redux';
-import { calculateDistance } from './distance-calculator';
 
-function RequestItem({ info, distance }) {
+function ParentRequestItem({ info, distance }) {
   const navigation = useNavigation();
+  const { allUsers } = useSelector((state) => state.users);
 
-  const { user, allUsers } = useSelector((state) => state.users);
-  const Parent = allUsers.find((user) => user.id === info.parentId);
+  const returnTutorLocation = (id) => {
+    const selected = allUsers.filter((user) => user.id === id);
+    return selected[0].location;
+  };
+
   return (
     <View style={styles.principalContainer}>
       <View style={styles.parentLocDistanceContainer}>
-        <Text style={styles.parentText}>{info.parent} </Text>
+        <Text style={styles.parentText}>{info.tutor} </Text>
         <View style={styles.locationDistanceContainer}>
-          <Text style={styles.locationDistanceText}>{info.location + ' '}</Text>
           <Text style={styles.locationDistanceText}>
-            {calculateDistance(user.lat, user.long, Parent.lat, Parent.long) +
-              ' km'}
+            {returnTutorLocation(info.tutorId) + ' '}
           </Text>
+          <Text style={styles.locationDistanceText}>{distance + ' km'}</Text>
         </View>
       </View>
       <View style={styles.studentsDetailsContainer}>
@@ -121,4 +123,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default RequestItem;
+export default ParentRequestItem;

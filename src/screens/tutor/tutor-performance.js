@@ -11,6 +11,7 @@ import {
 } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import SearchableDropdown from 'react-native-searchable-dropdown';
+import { useSelector } from 'react-redux';
 
 const TutorPerformance = () => {
   const [parent, setParent] = useState('');
@@ -21,10 +22,10 @@ const TutorPerformance = () => {
   const [selectedWard, setSelectedWard] = useState('');
   const [image, setImage] = useState(null);
 
+  const { requests } = useSelector((state) => state.requests);
+  const { user } = useSelector((state) => state.users);
+
   const handleSubmit = () => {
-    // Here, you can send the form data to your desired destination or store it in state.
-    // You can use the state variables (Parent, exerciseDuration, etc.) to store the form data.
-    // Implement your logic to save or process the data as needed.
     console.log('Form submitted:', {
       parent,
       exerciseDuration,
@@ -48,16 +49,17 @@ const TutorPerformance = () => {
     }
   };
 
-  const parents = [
-    {
-      name: 'Ronney Owusu Yeboah',
-      ward: [{ name: 'John Owusu Yeboah' }, { name: 'Clara Owusu Yeboah' }],
-    },
-    {
-      name: 'John Appiah',
-      ward: [{ name: 'Ama Appiah' }, { name: 'Kofi Appiah' }],
-    },
-  ];
+  const parents = requests.filter((req)=>req.tutorId===user.id) ;
+  // [
+  //   {
+  //     parent: 'Ronney Owusu Yeboah',
+  //     ward: [{ name: 'John Owusu Yeboah' }, { name: 'Clara Owusu Yeboah' }],
+  //   },
+  //   {
+  //     parent: 'John Appiah',
+  //     ward: [{ name: 'Ama Appiah' }, { name: 'Kofi Appiah' }],
+  //   },
+  // ];
 
   const handleSelectItem = (item) => {
     setSelectedItem(item);
@@ -69,8 +71,8 @@ const TutorPerformance = () => {
 
   const getWards = () => {
     let Ward = [];
-    parents.map((parent) => {
-      if (parent.name === selectedItem.name) Ward = parent.ward;
+    parents.map((par) => {
+      if (par.parent === selectedItem.parent) Ward = par.wards;
     });
     console.log(Ward);
     return Ward;
@@ -78,7 +80,7 @@ const TutorPerformance = () => {
 
   return (
     <View style={styles.container}>
-      <Text>Add performance form</Text>
+      <Text style={styles.titleText}>Add performance form</Text>
       <View>
         <Text style={styles.label}>Parent</Text>
         <SearchableDropdown
@@ -90,11 +92,11 @@ const TutorPerformance = () => {
           itemTextStyle={styles.dropdownItemText}
           itemsContainerStyle={styles.dropdownItemsContainer}
           items={parents}
-          placeholder={selectedItem ? selectedItem.name : ''}
-          placeholderTextColor="#888"
+          placeholder={selectedItem ? selectedItem.parent : ''}
+          placeholderTextColor="#000"
           resetValue={false}
           underlineColorAndroid="transparent"
-          value={selectedItem ? selectedItem.name : ''}
+          value={selectedItem ? selectedItem.parent : ''}
         />
       </View>
       <Text style={styles.label}>Ward</Text>
@@ -107,11 +109,11 @@ const TutorPerformance = () => {
         itemTextStyle={styles.dropdownItemText}
         itemsContainerStyle={styles.dropdownItemsContainer}
         items={getWards()}
-        placeholder={selectedWard ? selectedWard.name : ''}
+        placeholder={selectedWard ? selectedWard.student : ''}
         placeholderTextColor="#888"
         resetValue={false}
         underlineColorAndroid="transparent"
-        value={selectedWard ? selectedWard.name : ''}
+        value={selectedWard ? selectedWard.student : ''}
       />
       <View style={styles.subjectExerciseContainer}>
         <View style={styles.subjectContainer}>
@@ -180,6 +182,11 @@ const styles = StyleSheet.create({
     borderColor: '#888',
     borderRadius: 5,
     marginBottom: 7,
+  },
+  titleText: {
+    alignSelf: 'center',
+    fontSize: 18,
+    fontWeight: '700',
   },
   dropdownItem: {
     padding: 3,

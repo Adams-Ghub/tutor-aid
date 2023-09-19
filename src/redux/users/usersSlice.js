@@ -12,11 +12,12 @@ import {
 const initialState = {
   user: [],
   allUsers: [],
-  currentUser: null,
   error: null,
-  loading: false,
-  logged: false,
+  loginMsg: '',
+  registerMsg: '',
   updateMsg: '',
+  getAllUserMsg:'',
+  logOutMsg:''
 };
 
 const usersSlice = createSlice({
@@ -24,7 +25,7 @@ const usersSlice = createSlice({
   initialState,
   reducers: {
     updateUser: (state, action) => {
-      state.user = action.payload; // Update the state correctly here
+      state.allUsers = action.payload; // Update the state correctly here
     },
     approval: (state, action) => {
       state.allUsers.map((user) => {
@@ -40,48 +41,53 @@ const usersSlice = createSlice({
   extraReducers: (builder) => {
     builder
       .addCase(RegisterUser.pending, (state) => {
-        state.loading = true;
+        state.registerMsg = 'pending';
         state.error = null;
       })
       .addCase(RegisterUser.fulfilled, (state, action) => {
-        state.currentUser = action.payload;
-        state.loading = false;
+        state.registerMsg='fulfilled';
+        state.user =  action.payload;
       })
       .addCase(RegisterUser.rejected, (state, action) => {
+        state.registerMsg='';
         state.error = action.payload;
       })
       .addCase(UserLogin.pending, (state) => {
-        state.loading = true;
+        state.loginMsg = 'pending';
         state.error = null;
       })
       .addCase(UserLogin.fulfilled, (state, action) => {
         state.user = action.payload;
-        state.logged = true;
+        state.loginMsg = 'fulfilled';
+       
       })
       .addCase(UserLogin.rejected, (state, action) => {
         state.error = action.payload;
+        state.loginMsg = '';
       })
       .addCase(GetAllUsers.pending, (state) => {
-        state.loading = true;
+        state.getAllUserMsg='pending'
         state.error = null;
       })
       .addCase(GetAllUsers.fulfilled, (state, action) => {
         state.allUsers = action.payload;
-        state.loading = false;
+        state.getAllUserMsg='fufilled'
       })
       .addCase(GetAllUsers.rejected, (state, action) => {
         state.error = action.payload;
-        state.loading = false;
+        state.getAllUserMsg=''
       })
       .addCase(Logout.pending, (state) => {
-        state.loading = true;
-        state.error = null;
+        state.logOutMsg='pending'
       })
       .addCase(Logout.fulfilled, (state) => {
         state.user = [];
-        state.logged = false;
+        state.logOutMsg='fulfilled';
+        state.loginMsg = '';
+       
       })
       .addCase(Logout.rejected, (state, action) => {
+        state.logOutMsg='';
         state.error = action.payload;
       })
       .addCase(UpdateProfile.pending, (state) => {
@@ -89,12 +95,9 @@ const usersSlice = createSlice({
       })
       .addCase(UpdateProfile.fulfilled, (state) => {
         state.updateMsg = 'profile updated successfully';
-        
-    
       })
       .addCase(UpdateProfile.rejected, (state, action) => {
         state.error = action.payload;
-       
       })
       .addCase(ApproveTutor.pending, (state) => {
         state.updateMsg = 'updating...';
@@ -109,5 +112,5 @@ const usersSlice = createSlice({
   },
 });
 
-export const { updateUser, approval,clearUpdateMsg } = usersSlice.actions;
+export const { updateUser, approval, clearUpdateMsg } = usersSlice.actions;
 export default usersSlice.reducer;

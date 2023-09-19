@@ -17,7 +17,7 @@ const TutorComponent = ({ info, distance, onPressDetails }) => {
           <Text style={styles.contactText}>{info.phone}</Text>
           <View style={styles.locationDistanceContainer}>
             <Text style={styles.locationText}>{info.location}</Text>
-            <Text style={styles.locationText}>{distance+"km"}</Text>
+            <Text style={styles.locationText}>{distance+" km"}</Text>
           </View>
         </View>
         <View>

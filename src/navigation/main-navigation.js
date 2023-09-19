@@ -8,13 +8,13 @@ import AdminNavigation from './admin-navigation';
 import TutorNavigation from './tutor-navigation';
 
 function MainNavigation() {
-  const { user, logged } = useSelector((state) => state.users);
+  const { user, loginMsg } = useSelector((state) => state.users);
 
   const Stack = createNativeStackNavigator();
 
   return (
     <Stack.Navigator>
-      {logged ? (
+      {loginMsg === 'fulfilled' ? (
         user.role === 'admin' ? (
           <Stack.Screen
             name="AdminWelcome"

@@ -16,6 +16,7 @@ import {
   query,
 } from 'firebase/firestore';
 import { auth, db } from '../../firebase/firebase.js';
+import { updateUser } from './usersSlice.js';
 
 export const RegisterUser = createAsyncThunk(
   'user/register',
@@ -64,7 +65,7 @@ export const RegisterUser = createAsyncThunk(
           );
         }
       );
-      return user;
+      return [{ email: user.email, id: user.uid }];
     } catch (error) {
       thunkAPI.rejectWithValue(error);
       alert(error.message);
@@ -113,16 +114,6 @@ export const Logout = createAsyncThunk('user/Logout', async (_, thunkAPI) => {
   }
 });
 
-/*
-const q = query(collection(db, "cities"), where("state", "==", "CA"));
-const unsubscribe = onSnapshot(q, (querySnapshot) => {
-  const cities = [];
-  querySnapshot.forEach((doc) => {
-      cities.push(doc.data().name);
-  });
-  console.log("Current cities in CA: ", cities.join(", "));
-});
-*/
 
 export const GetAllUsers = createAsyncThunk(
   'user/getUsers',
@@ -143,32 +134,6 @@ export const GetAllUsers = createAsyncThunk(
     }
   }
 );
-
-// export const GetAllUsers = createAsyncThunk(
-//   'user/getUsers',
-//   async (_, thunkAPI) => {
-//     try {
-//       const userData = [];
-
-//       // Use onSnapshot to listen to changes in the 'users' collection
-//       const querySnapshot = await onSnapshot(collection(db, 'users'), (snapshot) => {
-//         snapshot.forEach((doc) => {
-//           // doc.data() is never undefined for query doc snapshots
-//           console.log(doc.id, ' => ', doc.data());
-//           userData.push(doc.data());
-//         });
-//       });
-
-//       // Wait for the onSnapshot promise to resolve before returning the userData array
-//       await querySnapshot;
-
-//       return userData;
-//     } catch (error) {
-//       alert(error.message);
-//       throw error;
-//     }
-//   }
-// );
 
 export const UpdateProfile = createAsyncThunk(
   'profile-update',
@@ -233,3 +198,19 @@ export const ApproveTutor = createAsyncThunk(
     }
   }
 );
+
+//Listener actions
+
+export const listenToProfileUpdate = () => (dispatch) => {
+  const firestoreCollection = collection(db, 'users');
+
+  const unsubscribe = onSnapshot(firestoreCollection, (snapshot) => {
+    const data = snapshot.docs.map((doc) => ({
+      ...doc.data(),
+    }));
+    dispatch(updateUser(data));
+  });
+
+  // Clean up the listener when needed
+  return () => unsubscribe();
+};

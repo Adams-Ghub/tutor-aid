@@ -37,22 +37,22 @@ const RegistrationNav = () => {
 function AdminNavigation({ navigation }) {
   const Drawer = createDrawerNavigator();
   const dispatch = useDispatch();
-  const { user, logged } = useSelector((state) => state.users);
+  const { user, loginMsg } = useSelector((state) => state.users);
   const handleLogout = () => {
     dispatch(Logout());
   };
 
   useEffect(
     () => {
-      if (logged === false) {
+      if (loginMsg === '') {
         navigation.navigate('Login');
       }
     },
-    [logged],
-    dispatch
+    [loginMsg],
+    
   );
 
-  const displayName = logged ? user.fullName.split(' ') : '';
+  const displayName = loginMsg==="fulfilled" ? user.fullName.split(' ') : '';
 
   return (
     <Drawer.Navigator

@@ -15,14 +15,13 @@ import { Entypo, EvilIcons, FontAwesome5, AntDesign } from '@expo/vector-icons';
 import profileImg from '../../assets/profile.png';
 
 const Stack = createNativeStackNavigator();
-const TutorProfileNav=()=> {
+const TutorProfileNav = () => {
   return (
     <Stack.Navigator
       screenOptions={{
         header: () => null,
       }}
       initialRouteName="FormOne"
-
     >
       <Stack.Screen
         name="FormOne"
@@ -36,15 +35,14 @@ const TutorProfileNav=()=> {
       />
     </Stack.Navigator>
   );
-}
-const TutorRequestNav=()=> {
+};
+const TutorRequestNav = () => {
   return (
     <Stack.Navigator
       screenOptions={{
         header: () => null,
       }}
       initialRouteName="Request"
-
     >
       <Stack.Screen
         name="Request"
@@ -58,28 +56,17 @@ const TutorRequestNav=()=> {
       />
     </Stack.Navigator>
   );
-}
+};
 
 function TutorNavigation({ navigation }) {
   const Drawer = createDrawerNavigator();
   const dispatch = useDispatch();
-  const { user, logged } = useSelector((state) => state.users);
+  const { user, loginMsg } = useSelector((state) => state.users);
   const handleLogout = () => {
     dispatch(Logout());
   };
 
-
-  useEffect(
-    () => {
-      if (logged === false) {
-        navigation.navigate('Login');
-      }
-    },
-    [logged],
-    dispatch
-  );
-
-  const displayName = logged ? user.fullName.split(' ') : '';
+  const displayName = loginMsg === 'fulfilled' ? user.fullName.split(' ') : '';
 
   return (
     <Drawer.Navigator

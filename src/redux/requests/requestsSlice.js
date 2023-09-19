@@ -20,12 +20,16 @@ const requestsSlice = createSlice({
   initialState,
   reducers: {
     acceptReqUpdate: (state, action) => {
-      state.requests.map((request) => {
-        if (request.id === action.payload.id) {
-          request.statu = 'accepted';
-        }
-      });
+      // state.requests.map((request) => {
+      //   if (request.id === action.payload.id) {
+      //     request.status = 'accepted';
+      //   }
+      // });
+      console.log("payload:",action.payload)
     },
+    setRequestUpdate:(state,action)=>{
+      state.requests=action.payload
+    }
   },
   extraReducers: (builder) => {
     builder
@@ -59,8 +63,7 @@ const requestsSlice = createSlice({
         state.error = null;
       })
       .addCase(AcceptRequest.fulfilled, (state, action) => {
-        state.message = 'fetched requests successfully';
-        state.requests = action.payload;
+        state.message = 'requests successfully';
         state.error = null;
       })
       .addCase(AcceptRequest.rejected, (state, action) => {
@@ -70,5 +73,5 @@ const requestsSlice = createSlice({
   },
 });
 
-export const { acceptReqUpdate } = requestsSlice.actions;
+export const { acceptReqUpdate,setRequestUpdate } = requestsSlice.actions;
 export default requestsSlice.reducer;

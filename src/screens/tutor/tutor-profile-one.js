@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import {useSelector,useDispatch} from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import * as ImagePicker from 'expo-image-picker';
 import {
   View,
@@ -10,11 +10,13 @@ import {
   Image,
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import { GetUser } from '../../redux/users/usersAction';
+import { listenToProfileUpdate } from '../../redux/users/usersAction';
+import { getCurrentPositionAsync, Accuracy } from 'expo-location';
+import { getLocationPermission } from '../../components/distance-calculator';
 
 function TutorProfileOne() {
   const { user } = useSelector((state) => state.users);
-  const dispatch =useDispatch()
+  const dispatch = useDispatch();
 
   const [image, setImage] = useState(null);
   const [fullName, setFullName] = useState(user.fullName);
@@ -22,9 +24,9 @@ function TutorProfileOne() {
   const [location, setLocation] = useState(user.location);
   const [phone, setPhone] = useState(user.phone);
   const [status, setStatus] = useState(user.status);
-  const [statusStyle, setStatusStyle] = useState(styles.pending);
+  const [long, setLong] = useState(user.long);
+  const [lat, setLat] = useState(user.lat);
   const navigation = useNavigation();
-
 
   const pickImage = async () => {
     // No permissions request is necessary for launching the image library
@@ -42,21 +44,43 @@ function TutorProfileOne() {
     }
   };
 
-  // useEffect(()=>{
-  //   dispatch(GetUser)
-  // },[user])
+  useEffect(() => {
+    const unsubscribe = dispatch(listenToProfileUpdate());
 
+    return () => {
+      // Clean up the listener when the component unmounts
+      unsubscribe();
+    };
+  }, [dispatch]);
+
+  useEffect(() => {
+    getLocationPermission();
+  }, []);
+
+  const getUserLocation = async () => {
+    try {
+      const location = await getCurrentPositionAsync({
+        accuracy: Accuracy.BestForNavigation, // You can choose the desired accuracy
+      });
+
+      const { latitude, longitude } = location.coords;
+      setLong(longitude);
+      setLat(latitude);
+    } catch (error) {
+      Alert.alert('Error getting coordinates', error);
+    }
+  };
 
   return (
     <View style={styles.mainContainer}>
       <Text style={styles.heading}>Teacher Profile</Text>
       {status === 'approved' ? (
-            <Text style={styles.approved}>{status}</Text>
-          ) : status === 'declined' ? (
-            <Text style={styles.declined}>{status}</Text>
-          ) : (
-            <Text style={styles.pending}>{status}</Text>
-          )}
+        <Text style={styles.approved}>{status}</Text>
+      ) : status === 'declined' ? (
+        <Text style={styles.declined}>{status}</Text>
+      ) : (
+        <Text style={styles.pending}>{status}</Text>
+      )}
       <View style={styles.imageMajorContainer}>
         <TouchableOpacity
           onPress={pickImage}
@@ -113,7 +137,7 @@ function TutorProfileOne() {
           </View>
           <TextInput
             style={styles.allTextInput}
-            keyboardType='number-pad'
+            keyboardType="number-pad"
             onChangeText={(text) => setPhone(text)}
             value={phone}
           />
@@ -144,8 +168,12 @@ function TutorProfileOne() {
                   <TextInput
                     style={styles.codeTextInput}
                     placeholder="click Get code button"
+                    value={long === '' || lat === '' ? '' : long + ', ' + lat}
                   />
-                  <TouchableOpacity style={styles.getCodeBtn}>
+                  <TouchableOpacity
+                    style={styles.getCodeBtn}
+                    onPress={getUserLocation}
+                  >
                     <Text style={styles.getCodeText}>Get code</Text>
                   </TouchableOpacity>
                 </View>
@@ -160,7 +188,15 @@ function TutorProfileOne() {
           <TouchableOpacity
             onPress={() =>
               navigation.navigate('FormTwo', {
-                data: { name: fullName, location, phone, email,status },
+                data: {
+                  name: fullName,
+                  location,
+                  phone,
+                  email,
+                  status,
+                  long,
+                  lat,
+                },
               })
             }
             style={styles.nextBtn}

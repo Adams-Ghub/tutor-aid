@@ -20,16 +20,15 @@ export default function Login({ navigation }) {
   const [isModalVisible, setModalVisible] = useState(false);
   const dispatch = useDispatch();
 
-
   const handleLogin = () => {
     dispatch(UserLogin({ email, password }));
-   
   };
 
   const handleModalClose = () => {
     setModalVisible(false);
   };
 
+  const { loginMsg } = useSelector((state) => state.users);
 
   return (
     <View style={styles.container}>
@@ -37,8 +36,12 @@ export default function Login({ navigation }) {
         <Text style={styles.headingText}>Login</Text>
       </View>
       <ScrollView style={styles.bottomSection}>
-       
         <View style={styles.emailLabelInputContainer}>
+          {loginMsg === 'pending' ? (
+            <Text style={styles.loginMsg}>Signing in...</Text>
+          ) : loginMsg === 'fulfilled' ? (
+            <Text>successfully logged in</Text>
+          ) : null}
           <Text style={styles.emailText}>Email Address</Text>
           <TextInput
             style={styles.emailInput}
@@ -178,6 +181,10 @@ const styles = StyleSheet.create({
     color: '#050505',
     fontSize: 18,
     width: '90%',
+  },
+  loginMsg: {
+    alignSelf: 'center',
+    fontSize: 14,
   },
   visibilityPasswordInputContainer: {
     flexDirection: 'row',

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState,useEffect } from 'react';
 import {
   View,
   Text,
@@ -12,7 +12,7 @@ import { RadioButton } from 'react-native-paper';
 import { useRoute } from '@react-navigation/native';
 import { useDispatch } from 'react-redux';
 import { approval } from '../../redux/users/usersSlice';
-import { ApproveTutor } from '../../redux/users/usersAction';
+import { ApproveTutor, listenToProfileUpdate } from '../../redux/users/usersAction';
 
 function ProfileDetails() {
   const tutor = {
@@ -45,7 +45,14 @@ function ProfileDetails() {
     
   };
 
-  console.log('fromComponent: ', data);
+  useEffect(() => {
+    const unsubscribe = dispatch(listenToProfileUpdate());
+
+    return () => {
+      // Clean up the listener when the component unmounts
+      unsubscribe();
+    };
+  }, [dispatch]);
 
   return (
     <View style={styles.container}>

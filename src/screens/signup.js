@@ -23,41 +23,23 @@ export default function Signup({ navigation }) {
   const [showPassword, setShowPassword] = useState(false);
   const [isModalVisible, setModalVisible] = useState(false);
 
-  const { currentUser,logged } = useSelector((state) => state.users);
+  const { user, registerMsg } = useSelector((state) => state.users);
 
   const handleSignUp = () => {
     dispatch(RegisterUser({ email, password, role, fullName }));
   };
 
   useEffect(() => {
-    if (currentUser) {
-      setModalVisible(true);
+    if (registerMsg === 'fulfilled') {
+      setEmail(''), setPassword(''), setFullName('');
     }
-    if(logged===false){
-      setModalVisible(false)
-    }
-  }, [currentUser,logged]);
+  }, [user, registerMsg]);
 
   const handleModalClose = () => {
     navigation.navigate('Login');
     setModalVisible(false);
   };
 
-  const displayRegistrationSection = () => {
-    if (checked === 'second') {
-      return (
-        <View style={styles.registrationLabelInputContainer}>
-          <Text style={styles.registrationText}>Registration Number</Text>
-          <TextInput
-            style={styles.registrationInput}
-            onChangeText={(text) => {
-              setRole('tutor');
-            }}
-          />
-        </View>
-      );
-    }
-  };
   return (
     <View style={styles.container}>
       <View style={styles.headingSection}>
@@ -65,6 +47,11 @@ export default function Signup({ navigation }) {
       </View>
       <ScrollView style={styles.bottomSection}>
         <View style={styles.emailLabelInputContainer}>
+          {registerMsg === 'pending' ? (
+            <Text>signing up...</Text>
+          ) : registerMsg === 'fulfilled' ? (
+            <Text>account created. Login now!!</Text>
+          ) : null}
           <Text style={styles.emailText}>Full Name</Text>
           <TextInput
             style={styles.emailInput}

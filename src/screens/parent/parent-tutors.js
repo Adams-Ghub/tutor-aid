@@ -10,7 +10,11 @@ import {
 import TutorComponent from '../../components/tutor-component';
 import { useNavigation } from '@react-navigation/native';
 import { useSelector, useDispatch } from 'react-redux';
-import { GetAllUsers } from '../../redux/users/usersAction';
+import {
+  GetAllUsers,
+  listenToProfileUpdate,
+} from '../../redux/users/usersAction';
+import { calculateDistance } from '../../components/distance-calculator';
 
 const ParentTutors = () => {
   const navigation = useNavigation();
@@ -20,12 +24,23 @@ const ParentTutors = () => {
     dispatch(GetAllUsers());
   }, [allUsers]);
 
-  const { allUsers } = useSelector((state) => state.users);
+  useEffect(() => {
+    const unsubscribe = dispatch(listenToProfileUpdate());
+
+    return () => {
+      // Clean up the listener when the component unmounts
+      unsubscribe();
+    };
+  }, [dispatch]);
+
+  const { allUsers, user } = useSelector((state) => state.users);
 
   const [location, setLocation] = useState('');
 
   const approvedTutors = allUsers.filter(
-    (tutor) => tutor.status === 'approved' && tutor.location.toLowerCase().includes(location)
+    (tutor) =>
+      tutor.status === 'approved' &&
+      tutor.location.toLowerCase().includes(location)
   );
 
   const handlePressDetails = (details) => {
@@ -45,7 +60,12 @@ const ParentTutors = () => {
           return (
             <TutorComponent
               info={item}
-              distance={'20'}
+              distance={calculateDistance(
+                item.lat,
+                item.long,
+                user.lat,
+                user.long
+              )}
               onPressDetails={handlePressDetails}
             />
           );
