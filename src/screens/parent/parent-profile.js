@@ -10,19 +10,26 @@ import {
   ScrollView,
 } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux';
-import { updateUser } from '../../redux/users/usersSlice';
-import { UpdateProfile, listenToProfileUpdate } from '../../redux/users/usersAction';
+import { clearUpdateMsg, updateUser } from '../../redux/users/usersSlice';
+import {
+  UpdateProfile,
+  listenToProfileUpdate,
+} from '../../redux/users/usersAction';
+import { getLocationPermission } from '../../components/distance-calculator';
+import { getCurrentPositionAsync, Accuracy } from 'expo-location';
 
 function ParentProfile() {
   const dispatch = useDispatch();
 
-  const { user } = useSelector((state) => state.users);
+  const { user, updateMsg } = useSelector((state) => state.users);
 
   const [image, setImage] = useState(null);
   const [fullName, setFullName] = useState(user.fullName);
   const [email, setEmail] = useState(user.email);
   const [location, setLocation] = useState(user.location);
   const [phone, setPhone] = useState(user.phone);
+  const [long, setLong] = useState(user.long);
+  const [lat, setLat] = useState(user.lat);
 
   const handleSubmit = () => {
     const data = {
@@ -30,13 +37,19 @@ function ParentProfile() {
       email,
       location,
       phone,
+      lat,
+      long,
       id: user.id,
       role: user.role,
     };
 
     dispatch(UpdateProfile(data));
-    
   };
+
+  useEffect(() => {
+    getLocationPermission();
+  }, []);
+
 
   useEffect(() => {
     const unsubscribe = dispatch(listenToProfileUpdate());
@@ -46,6 +59,29 @@ function ParentProfile() {
       unsubscribe();
     };
   }, [dispatch]);
+
+  useEffect(() => {
+    if (updateMsg === 'profile updated successfully') {
+      setTimeout(() => {
+        dispatch(clearUpdateMsg());
+      }, 4000);
+    }
+  }, [updateMsg]);
+
+  const getUserLocation = async () => {
+    try {
+      const location = await getCurrentPositionAsync({
+        accuracy: Accuracy.BestForNavigation, // You can choose the desired accuracy
+      });
+
+      const { latitude, longitude } = location.coords;
+      setLong(longitude);
+      setLat(latitude);
+    } catch (error) {
+      alert('Error getting coordinates', error);
+      console.log("getCoord:",error)
+    }
+  };
 
 
   const pickImage = async () => {
@@ -157,9 +193,10 @@ function ParentProfile() {
                   <TextInput
                     style={styles.codeTextInput}
                     placeholder="click Get code button"
+                    value={long === '' || lat === '' ? '' : long + ', ' + lat}
                     editable={false}
                   />
-                  <TouchableOpacity style={styles.getCodeBtn}>
+                  <TouchableOpacity style={styles.getCodeBtn} onPress={getUserLocation}>
                     <Text style={styles.getCodeText}>Get code</Text>
                   </TouchableOpacity>
                 </View>
@@ -172,6 +209,7 @@ function ParentProfile() {
         </View>
       </ScrollView>
       <View style={styles.updateButtonContainer}>
+        <Text>{updateMsg}</Text>
         <TouchableOpacity style={styles.updateButton} onPress={handleSubmit}>
           <Text style={styles.updateButtonText}>update</Text>
         </TouchableOpacity>
@@ -298,6 +336,7 @@ const styles = StyleSheet.create({
     borderColor: '#333',
     borderRadius: 5,
     paddingHorizontal: 5,
+    color:'#000',
     fontSize: 14,
     height: 24,
     width: '70%',
