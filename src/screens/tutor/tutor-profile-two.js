@@ -18,9 +18,7 @@ import { clearUpdateMsg, updateUser } from '../../redux/users/usersSlice';
 const TutorProfileTwo = () => {
   const { updateMsg, user } = useSelector((state) => state.users);
 
-  const [profSummary, setProfSummary] = useState(
-    user.profile.profSummary
-  );
+  const [profSummary, setProfSummary] = useState(user.profile.profSummary);
   const [subjects, setSubjects] = useState(user.profile.subjects);
   const [experience, setExperience] = useState(user.profile.experience);
   const [education, setEducation] = useState(user.profile.education);
@@ -46,19 +44,17 @@ const TutorProfileTwo = () => {
     id: user.id,
   };
 
-  console.log('after:', data);
-
   const handleSubmit = () => {
-    dispatch(UpdateProfile( data ));
+    dispatch(UpdateProfile(data));
   };
 
-  useEffect(()=>{
-    if(updateMsg==='profile updated successfully'){
+  useEffect(() => {
+    if (updateMsg === 'profile updated successfully') {
       setTimeout(() => {
         dispatch(clearUpdateMsg());
-      }, 5000);
+      }, 4000);
     }
-  },[updateMsg])
+  }, [updateMsg]);
 
   const windowWidth = Dimensions.get('window').width;
 
@@ -168,7 +164,7 @@ const styles = StyleSheet.create({
     paddingVertical: 5,
     alignItems: 'center',
     borderRadius: 5,
-    marginBottom:40
+    marginBottom: 40,
   },
   heading: {
     fontSize: 20,
