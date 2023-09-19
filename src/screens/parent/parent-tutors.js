@@ -14,6 +14,7 @@ import {
   GetAllUsers,
   listenToProfileUpdate,
 } from '../../redux/users/usersAction';
+import { calculateDistance } from '../../components/distance-calculator';
 
 const ParentTutors = () => {
   const navigation = useNavigation();
@@ -32,7 +33,7 @@ const ParentTutors = () => {
     };
   }, [dispatch]);
 
-  const { allUsers } = useSelector((state) => state.users);
+  const { allUsers, user } = useSelector((state) => state.users);
 
   const [location, setLocation] = useState('');
 
@@ -59,7 +60,12 @@ const ParentTutors = () => {
           return (
             <TutorComponent
               info={item}
-              distance={'20'}
+              distance={calculateDistance(
+                item.lat,
+                item.long,
+                user.lat,
+                user.long
+              )}
               onPressDetails={handlePressDetails}
             />
           );

@@ -2,6 +2,8 @@ import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import InfoHeader from './info-header';
 import { useRoute } from '@react-navigation/native';
+import { useSelector } from 'react-redux';
+import { calculateDistance } from '../../components/distance-calculator';
 
 function TutorDetails({ navigation }) {
   const tutor = {
@@ -16,14 +18,16 @@ function TutorDetails({ navigation }) {
   };
 
   const info = useRoute().params.info;
-
-  console.log('info:', info);
+  const { user } = useSelector((state) => state.users);
 
   return (
     <View style={styles.container}>
       <Text style={styles.header}>Professional Info</Text>
       <View style={styles.headerContainer}>
-        <InfoHeader info={info} distance={8} />
+        <InfoHeader
+          info={info}
+          distance={calculateDistance(user.lat, user.long, info.lat, info.long)}
+        />
       </View>
       <View style={styles.infoContainer}>
         <View style={styles.infoItem}>

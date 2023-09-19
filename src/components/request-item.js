@@ -1,17 +1,24 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { useNavigation } from '@react-navigation/core';
+import { useSelector } from 'react-redux';
+import { calculateDistance } from './distance-calculator';
 
 function RequestItem({ info, distance }) {
   const navigation = useNavigation();
 
+  const { user, allUsers } = useSelector((state) => state.users);
+  const Parent = allUsers.find((user) => user.id === info.parentId);
   return (
     <View style={styles.principalContainer}>
       <View style={styles.parentLocDistanceContainer}>
         <Text style={styles.parentText}>{info.parent} </Text>
         <View style={styles.locationDistanceContainer}>
           <Text style={styles.locationDistanceText}>{info.location + ' '}</Text>
-          <Text style={styles.locationDistanceText}>{distance + ' km'}</Text>
+          <Text style={styles.locationDistanceText}>
+            {calculateDistance(user.lat, user.long, Parent.lat, Parent.long) +
+              ' km'}
+          </Text>
         </View>
       </View>
       <View style={styles.studentsDetailsContainer}>
