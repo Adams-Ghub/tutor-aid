@@ -15,9 +15,11 @@ import {
   Entypo,
   Ionicons ,
   EvilIcons,
+  FontAwesome5,
   AntDesign,
 } from '@expo/vector-icons';
 import profileImg from '../../assets/profile.png';
+import ParentRequests from '../screens/parent/parent-requests';
 
 const Stack = createNativeStackNavigator();
 
@@ -41,6 +43,22 @@ const AllTutorSubNavigation = () => {
         name="RequestForm"
         component={RequestForm}
       />
+    </Stack.Navigator>
+  );
+};
+const AllRequestsSubNavigation = () => {
+  return (
+    <Stack.Navigator
+      screenOptions={{
+        header: () => null,
+      }}
+      initialRouteName="PRequests"
+    >
+      <Stack.Screen
+        name="PRequests"        
+        component={ParentRequests}
+      />
+      
     </Stack.Navigator>
   );
 };
@@ -152,6 +170,30 @@ function ParentNavigation({ navigation }) {
                   />
                 }
                 title="Tutors"
+              />
+            );
+          },
+          drawerItemStyle: {
+            backgroundColor: 'transparent',
+          },
+        }}
+      />
+      <Drawer.Screen
+        name="Requests"
+        component={AllRequestsSubNavigation}
+        options={{
+          drawerLabel: () => {
+            return (
+              <DrawerItem
+                icon={
+                  <FontAwesome5
+                    name="chalkboard-teacher"
+                    style={{}}
+                    size={16}
+                    color="#fff"
+                  />
+                }
+                title="Requests"
               />
             );
           },
