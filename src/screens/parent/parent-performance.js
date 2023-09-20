@@ -11,6 +11,9 @@ import {
 } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import SearchableDropdown from 'react-native-searchable-dropdown';
+import { useSelector,useDispatch } from 'react-redux';
+import { useEffect } from 'react';
+import { GetPerformances, listenToPerformanceChanges } from '../../redux/performances/performanceActions';
 
 const ParentPerformance = () => {
   const [tutor, setTutor] = useState('');
@@ -19,37 +22,14 @@ const ParentPerformance = () => {
   const [exerciseFrequency, setExerciseFrequency] = useState('');
   const [exerciseDescription, setExerciseDescription] = useState('');
   const [selectedItem, setSelectedItem] = useState('');
-  const [selectedTutor, setSelectedTutor]=useState('');
+  const [selectedTutor, setSelectedTutor] = useState('');
   const [selectedWard, setSelectedWard] = useState('');
   const [selectedSubject, setSelectedSubject] = useState('');
   const [image, setImage] = useState(null);
 
-  const handleSubmit = () => {
-    // Here, you can send the form data to your desired destination or store it in state.
-    // You can use the state variables (Parent, exerciseDuration, etc.) to store the form data.
-    // Implement your logic to save or process the data as needed.
-    console.log('Form submitted:', {
-      parent,
-      exerciseDuration,
-      exerciseFrequency,
-      exerciseDescription,
-    });
-  };
-
-  const pickImage = async () => {
-    // No permissions request is necessary for launching the image library
-    let result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.All,
-      allowsEditing: true,
-      quality: 1,
-    });
-
-    console.log(result);
-
-    if (!result.canceled) {
-      setImage(result.assets[0].uri);
-    }
-  };
+  const { performances } = useSelector((state) => state.performances); 
+  const {user} =useSelector((state)=>state.users)
+  const dispatch = useDispatch()
 
   // const parents = [
   //   {
@@ -61,75 +41,18 @@ const ParentPerformance = () => {
   //     ward: [{ name: 'Ama Appiah' }, { name: 'Kofi Appiah' }],
   //   },
   // ];
-  const scores = [
-    {
-      tutor: 'Samuel Boadu',
-      parent: 'Ronney Owusu Yeboah',
-      ward: [
-        {
-          name: 'John Owusu Yeboah',
-          subjects: [
-            {
-              name: 'Maths',
-              exercises: [
-                { number: 1, score: '10/10', image: 'url' },
-                { number: 2, score: '10/10', image: 'url' },
-              ],
-            },
-          ],
-        },
-        {
-          name: 'Clara Owusu Yeboah',
-          subjects: [
-            {
-              name: 'Maths',
-              exercises: [
-                { number: 1, score: '10/10', image: 'url' },
-                { number: 2, score: '10/10', image: 'url' },
-              ],
-            },
-            {
-              name: 'Science',
-              exercises: [
-                { number: 1, score: '7/10', image: 'url' },
-                { number: 2, score: '9/10', image: 'url' },
-              ],
-            },
-          ],
-        },
-      ],
-    },
-    {
-      tutor: 'Vivian Baidoo',
-      name: 'John Appiah',
-      ward: [
-        {
-          name: 'Ama Appiah',
-          subjects: [
-            {
-              name: 'English',
-              exercises: [
-                { number: 1, score: '10/10', image: 'url' },
-                { number: 2, score: '10/10', image: 'url' },
-              ],
-            },
-          ],
-        },
-        {
-          name: 'Kofi Appiah',
-          subjects: [
-            {
-              name: 'English',
-              exercises: [
-                { number: 1, score: '10/10', image: 'url' },
-                { number: 2, score: '10/10', image: 'url' },
-              ],
-            },
-          ],
-        },
-      ],
-    },
-  ];
+
+  const parentPerformance=performances.filter(per=>per.parentId===user.id)
+  const tutorSelection = parentPerformance.map((performance) => ({
+    id: performance.tutor,
+    name: performance.tutor,
+  }))  
+
+  
+useEffect(()=>{
+  dispatch(GetPerformances())
+  dispatch(listenToPerformanceChanges())
+},[])
 
   const handleSelectTutor = (item) => {
     setSelectedTutor(item);
@@ -143,33 +66,35 @@ const ParentPerformance = () => {
     setSelectedSubject(item);
   };
 
-const ExerciseComponent=({Exercise})=>{
-  return(
-    <Text>Exercise {Exercise}</Text>
-  )
-}
+  const ExerciseComponent = ({ Exercise }) => {
+    return <Text>{Exercise}</Text>;
+  };
 
   const getWards = () => {
     let Ward = [];
-    scores.map((score) => {
-      if (score.parent === "Ronney Owusu Yeboah") Ward = score.ward;
+    parentPerformance.map((score) => {
+      if (score.parent === 'Ronney Owusu Yeboah') Ward = score.ward;
     });
     return Ward;
   };
   const getSubjects = () => {
     let Subjects = [];
-    getWards().map((ward) => {      
-      if (ward.name === selectedWard.name) {Subjects = ward.subjects};
+    getWards().map((ward) => {
+      if (ward.name === selectedWard.name) {
+        Subjects = ward.subjects;
+      }
     });
-  console.log('ward', getWards())
+    console.log('subject', Subjects);
     return Subjects;
   };
   const getExercises = () => {
-    let  Exercise= [];
-    getSubjects().map((subject) => {      
-      if (subject.name === selectedSubject.name) {Exercise = subject.exercises};
+    let Exercise = [];
+    getSubjects().map((subject) => {
+      if (subject.name === selectedSubject.name) {
+        Exercise = subject.exercises;
+      }
     });
-  console.log('Exercises', Exercise);
+    console.log('Exercises', Exercise);
     return Exercise;
   };
 
@@ -185,12 +110,13 @@ const ExerciseComponent=({Exercise})=>{
           itemStyle={styles.dropdownItem}
           itemTextStyle={styles.dropdownItemText}
           itemsContainerStyle={styles.dropdownItemsContainer}
-          items={scores}
-          placeholder={selectedTutor? selectedTutor.tutor : ''}
-          placeholderTextColor="#888"
+          items={tutorSelection}
+          placeholder={selectedTutor ? selectedTutor.name : ''}
+          placeholderTextColor="#000"
           resetValue={false}
           underlineColorAndroid="transparent"
-          value={selectedTutor ? selectedTutor.tutor : ''}
+          value={selectedTutor ? selectedTutor.name : 'Select tutor'}
+          textSearch={true}
         />
       </View>
       <Text style={styles.label}>Ward</Text>
@@ -202,15 +128,19 @@ const ExerciseComponent=({Exercise})=>{
         itemStyle={styles.dropdownItem}
         itemTextStyle={styles.dropdownItemText}
         itemsContainerStyle={styles.dropdownItemsContainer}
-        items={getWards()}
+        items={getWards().map((ward) => ({
+          id: ward.name,
+          name: ward.name,
+        }))}
         placeholder={selectedWard ? selectedWard.name : ''}
-        placeholderTextColor="#888"
+        placeholderTextColor="#000"
         resetValue={false}
+        textSearch={true}
         underlineColorAndroid="transparent"
         value={selectedWard ? selectedWard.name : ''}
       />
 
-<Text style={styles.label}>Subject</Text>
+      <Text style={styles.label}>Subject</Text>
       <SearchableDropdown
         onTextChange={(text) => console.log(text)}
         onItemSelect={handleSelectedSubject}
@@ -219,12 +149,16 @@ const ExerciseComponent=({Exercise})=>{
         itemStyle={styles.dropdownItem}
         itemTextStyle={styles.dropdownItemText}
         itemsContainerStyle={styles.dropdownItemsContainer}
-        items={getSubjects()}
+        items={getSubjects().map((subject) => ({
+          id: subject.name,
+          name: subject.name,
+        }))}
         placeholder={selectedSubject ? selectedSubject.name : ''}
-        placeholderTextColor="#888"
+        placeholderTextColor="#000"
         resetValue={false}
         underlineColorAndroid="transparent"
         value={selectedWard ? selectedWard.name : ''}
+        textSearch={true}
       />
 
       {/* <View style={styles.subjectContainer}>
@@ -239,15 +173,13 @@ const ExerciseComponent=({Exercise})=>{
 
       <Text style={styles.label}> Exercises and Tests </Text>
       <View style={styles.exercisesContainer}>
-        {
-          getExercises().map(exercise=>{
-            return(
-              <TouchableOpacity>
-                <ExerciseComponent Exercise={exercise.number}/>
-              </TouchableOpacity>
-            )
-          })
-        }
+        {getExercises().map((exercise) => {
+          return (
+            <TouchableOpacity>
+              <ExerciseComponent Exercise={exercise.exercise} />
+            </TouchableOpacity>
+          );
+        })}
       </View>
     </View>
   );
@@ -295,7 +227,7 @@ const styles = StyleSheet.create({
     width: '49%',
   },
   exercisesContainer: {
-  paddingHorizontal: 5,
+    paddingHorizontal: 5,
   },
 
   scoresContainer: {
