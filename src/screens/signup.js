@@ -8,6 +8,7 @@ import {
   TextInput,
   TouchableOpacity,
   View,
+  Alert
 } from 'react-native';
 import { RegisterUser } from '../redux/users/usersAction';
 import { MaterialIcons } from '@expo/vector-icons';
@@ -26,7 +27,11 @@ export default function Signup({ navigation }) {
   const { user, registerMsg } = useSelector((state) => state.users);
 
   const handleSignUp = () => {
-    dispatch(RegisterUser({ email, password, role, fullName }));
+    if (!email || !password || !fullName) {
+      Alert.alert('Error', 'All input fields must be filled');
+    } else {
+      dispatch(RegisterUser({ email, password, role, fullName }));
+    }
   };
 
   useEffect(() => {

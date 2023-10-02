@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   View,
   Text,
@@ -7,33 +7,73 @@ import {
   StyleSheet,
   TouchableOpacity,
   Image,
+Alert,
   ScrollView,
 } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
+import * as Crypto from 'expo-crypto';
 import SearchableDropdown from 'react-native-searchable-dropdown';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
+import { AddPerformance } from '../../redux/performances/performanceActions';
 
 const TutorPerformance = () => {
   const [parent, setParent] = useState('');
   const [exercise, setExercise] = useState('');
   const [subject, setSubject] = useState('');
-  const [exerciseDescription, setExerciseDescription] = useState('');
+  const [mark, setMark] = useState('');
+  const [over, setOver] = useState('');
   const [selectedItem, setSelectedItem] = useState('');
   const [selectedWard, setSelectedWard] = useState('');
   const [image, setImage] = useState(null);
 
+  const dispatch = useDispatch();
   const { requests } = useSelector((state) => state.requests);
   const { user } = useSelector((state) => state.users);
+  const { performances, performanceMsg } = useSelector(
+    (state) => state.performances
+  );
 
   const handleSubmit = () => {
-    console.log('Form submitted:', {
-      parent,
-      exerciseDuration,
-      exerciseFrequency,
-      exerciseDescription,
-    });
+    const data = {
+      id: Crypto.randomUUID().slice(-12),
+      tutor: user.fullName,
+      tutorId: user.id,
+      parent: selectedItem.parent,
+      parentId: selectedItem.id,
+      ward: selectedWard.student,
+      wardId: Crypto.randomUUID().slice(-10),
+      subject,
+      exercise,
+      mark,
+      over,
+      image,
+    };
+
+    console.log('ward:', selectedWard);
+
+    if (
+      selectedItem === '' ||
+      selectedWard === '' ||
+      mark === '' ||
+      over === '' ||
+      image === null
+    ) {
+      Alert.alert('Error','all text fields must be filled');
+    } else {
+      dispatch(AddPerformance(data));
+      performanceMsg === 'performance added successfully'
+        ? (setExercise(''),
+          setImage(''),
+          setMark(''),
+          setOver(''),
+          setSubject(''))
+        : null;
+    }
   };
 
+  useEffect(() => {}, [performanceMsg]);
+
+  console.log('performance status:', performanceMsg);
   const pickImage = async () => {
     // No permissions request is necessary for launching the image library
     let result = await ImagePicker.launchImageLibraryAsync({
@@ -42,24 +82,22 @@ const TutorPerformance = () => {
       quality: 1,
     });
 
-    console.log(result);
-
     if (!result.canceled) {
       setImage(result.assets[0].uri);
+      console.log('image', result.assets[0].uri);
     }
   };
 
-  const parents = requests.filter((req)=>req.tutorId===user.id) ;
-  // [
-  //   {
-  //     parent: 'Ronney Owusu Yeboah',
-  //     ward: [{ name: 'John Owusu Yeboah' }, { name: 'Clara Owusu Yeboah' }],
-  //   },
-  //   {
-  //     parent: 'John Appiah',
-  //     ward: [{ name: 'Ama Appiah' }, { name: 'Kofi Appiah' }],
-  //   },
-  // ];
+  let parentSelection = [];
+  const parents = requests.filter((req) => {
+    if (req.tutorId === user.id) {
+      parentSelection.push({ id: req.parentId, name: req.parent });
+    }
+
+    return req;
+  });
+
+  console.log('parents:', parents);
 
   const handleSelectItem = (item) => {
     setSelectedItem(item);
@@ -70,12 +108,16 @@ const TutorPerformance = () => {
   };
 
   const getWards = () => {
-    let Ward = [];
+    let wardSelection = [];
     parents.map((par) => {
-      if (par.parent === selectedItem.parent) Ward = par.wards;
+      if (par.parent === selectedItem.name) {
+        par.wards.forEach((element) => {
+          wardSelection.push({ id: element.student, name: element.student });
+        });
+      }
     });
-    console.log(Ward);
-    return Ward;
+
+    return wardSelection;
   };
 
   return (
@@ -91,12 +133,12 @@ const TutorPerformance = () => {
           itemStyle={styles.dropdownItem}
           itemTextStyle={styles.dropdownItemText}
           itemsContainerStyle={styles.dropdownItemsContainer}
-          items={parents}
-          placeholder={selectedItem ? selectedItem.parent : ''}
+          items={parentSelection}
+          placeholder={selectedItem ? selectedItem.name : ''}
           placeholderTextColor="#000"
           resetValue={false}
           underlineColorAndroid="transparent"
-          value={selectedItem ? selectedItem.parent : ''}
+          value={selectedItem ? selectedItem.name : ''}
         />
       </View>
       <Text style={styles.label}>Ward</Text>
@@ -109,11 +151,11 @@ const TutorPerformance = () => {
         itemTextStyle={styles.dropdownItemText}
         itemsContainerStyle={styles.dropdownItemsContainer}
         items={getWards()}
-        placeholder={selectedWard ? selectedWard.student : ''}
-        placeholderTextColor="#888"
+        placeholder={selectedWard ? selectedWard.name : ''}
+        placeholderTextColor="#000"
         resetValue={false}
         underlineColorAndroid="transparent"
-        value={selectedWard ? selectedWard.student : ''}
+        value={selectedWard ? selectedWard.name : ''}
       />
       <View style={styles.subjectExerciseContainer}>
         <View style={styles.subjectContainer}>
@@ -123,6 +165,7 @@ const TutorPerformance = () => {
             placeholder="Eg. English"
             onChangeText={(text) => setSubject(text)}
             value={subject}
+            required={true}
           />
         </View>
         <View style={styles.exerciseContainer}>
@@ -132,6 +175,7 @@ const TutorPerformance = () => {
             placeholder="Eg. Exercise one"
             onChangeText={(text) => setExercise(text)}
             value={exercise}
+            require
           />
         </View>
       </View>
@@ -139,12 +183,16 @@ const TutorPerformance = () => {
       <View style={styles.scoresContainer}>
         <TextInput
           style={styles.input}
-          onChangeText={(text) => setExerciseDescription(text)}
-          value={exerciseDescription}
+          onChangeText={(text) => setMark(text)}
+          value={mark}
           multiline={true}
         />
         <Text> out of </Text>
-        <TextInput style={styles.input} />
+        <TextInput
+          style={styles.input}
+          value={over}
+          onChangeText={(text) => setOver(text)}
+        />
       </View>
       <Text style={styles.label}> Picture of exercise or test</Text>
       <View style={styles.imageContainer}>
@@ -156,6 +204,7 @@ const TutorPerformance = () => {
           )}
         </TouchableOpacity>
       </View>
+
       <TouchableOpacity onPress={handleSubmit} style={styles.submitBtn}>
         <Text style={styles.submitBtnText}>Submit</Text>
       </TouchableOpacity>

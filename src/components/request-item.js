@@ -1,14 +1,23 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { useNavigation } from '@react-navigation/core';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
+import { GetAllUsers } from '../redux/users/usersAction';
 import { calculateDistance } from './distance-calculator';
 
 function RequestItem({ info, distance }) {
   const navigation = useNavigation();
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+      dispatch(GetAllUsers());
+    },
+    []);
 
   const { user, allUsers } = useSelector((state) => state.users);
-  const Parent = allUsers.find((user) => user.id === info.parentId);
+  const Parent = allUsers.filter((user) => user.id === info.parentId);
+
+  console.log('parents:', Parent);
   return (
     <View style={styles.principalContainer}>
       <View style={styles.parentLocDistanceContainer}>
@@ -16,7 +25,7 @@ function RequestItem({ info, distance }) {
         <View style={styles.locationDistanceContainer}>
           <Text style={styles.locationDistanceText}>{info.location + ' '}</Text>
           <Text style={styles.locationDistanceText}>
-            {calculateDistance(user.lat, user.long, Parent.lat, Parent.long) +
+            {calculateDistance(user.lat, user.long, Parent[0].lat, Parent[0].long) +
               ' km'}
           </Text>
         </View>

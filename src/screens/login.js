@@ -6,6 +6,7 @@ import {
   TextInput,
   TouchableOpacity,
   View,
+  Alert,
 } from 'react-native';
 import { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -21,7 +22,11 @@ export default function Login({ navigation }) {
   const dispatch = useDispatch();
 
   const handleLogin = () => {
-    dispatch(UserLogin({ email, password }));
+    if (!email || !password) {
+      Alert.alert('Error', 'All input fields must be filled');
+    } else {
+      dispatch(UserLogin({ email, password }));
+    }
   };
 
   const handleModalClose = () => {
