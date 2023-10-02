@@ -73,7 +73,7 @@ useEffect(()=>{
   const getWards = () => {
     let Ward = [];
     parentPerformance.map((score) => {
-      if (score.parent === 'Ronney Owusu Yeboah') Ward = score.ward;
+      if (score.parent === user.fullName) Ward = score.ward;
     });
     return Ward;
   };
@@ -161,15 +161,7 @@ useEffect(()=>{
         textSearch={true}
       />
 
-      {/* <View style={styles.subjectContainer}>
-        <Text style={styles.label}>Subject</Text>
-        <TextInput
-          style={styles.input}
-          placeholder="Eg. English"
-          onChangeText={(text) => setExerciseFrequency(text)}
-          value={exerciseFrequency}
-        />
-      </View> */}
+  
 
       <Text style={styles.label}> Exercises and Tests </Text>
       <View style={styles.exercisesContainer}>

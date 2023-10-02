@@ -7,6 +7,7 @@ import {
   StyleSheet,
   TouchableOpacity,
   Image,
+Alert,
   ScrollView,
 } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
@@ -48,7 +49,7 @@ const TutorPerformance = () => {
       image,
     };
 
-    console.log('ward:',selectedWard)
+    console.log('ward:', selectedWard);
 
     if (
       selectedItem === '' ||
@@ -57,11 +58,15 @@ const TutorPerformance = () => {
       over === '' ||
       image === null
     ) {
-      alert('all text fields must be filled');
+      Alert.alert('Error','all text fields must be filled');
     } else {
       dispatch(AddPerformance(data));
       performanceMsg === 'performance added successfully'
-        ? (setExercise(''), setImage(''), setMark(''), setOver(''),setSubject(''))
+        ? (setExercise(''),
+          setImage(''),
+          setMark(''),
+          setOver(''),
+          setSubject(''))
         : null;
     }
   };
@@ -85,10 +90,14 @@ const TutorPerformance = () => {
 
   let parentSelection = [];
   const parents = requests.filter((req) => {
-    if (req.tutorId === user.id)
-      parentSelection.push({ parent: req.parent, id: req.parentId });
+    if (req.tutorId === user.id) {
+      parentSelection.push({ id: req.parentId, name: req.parent });
+    }
+
     return req;
   });
+
+  console.log('parents:', parents);
 
   const handleSelectItem = (item) => {
     setSelectedItem(item);
@@ -99,12 +108,16 @@ const TutorPerformance = () => {
   };
 
   const getWards = () => {
-    let Ward = [];
+    let wardSelection = [];
     parents.map((par) => {
-      if (par.parent === selectedItem.parent) Ward = par.wards;
+      if (par.parent === selectedItem.name) {
+        par.wards.forEach((element) => {
+          wardSelection.push({ id: element.student, name: element.student });
+        });
+      }
     });
-    console.log(Ward);
-    return Ward;
+
+    return wardSelection;
   };
 
   return (
@@ -121,11 +134,11 @@ const TutorPerformance = () => {
           itemTextStyle={styles.dropdownItemText}
           itemsContainerStyle={styles.dropdownItemsContainer}
           items={parentSelection}
-          placeholder={selectedItem ? selectedItem.parent : ''}
+          placeholder={selectedItem ? selectedItem.name : ''}
           placeholderTextColor="#000"
           resetValue={false}
           underlineColorAndroid="transparent"
-          value={selectedItem ? selectedItem.parent : ''}
+          value={selectedItem ? selectedItem.name : ''}
         />
       </View>
       <Text style={styles.label}>Ward</Text>
@@ -138,11 +151,11 @@ const TutorPerformance = () => {
         itemTextStyle={styles.dropdownItemText}
         itemsContainerStyle={styles.dropdownItemsContainer}
         items={getWards()}
-        placeholder={selectedWard ? selectedWard.student : ''}
+        placeholder={selectedWard ? selectedWard.name : ''}
         placeholderTextColor="#000"
         resetValue={false}
         underlineColorAndroid="transparent"
-        value={selectedWard ? selectedWard.student : ''}
+        value={selectedWard ? selectedWard.name : ''}
       />
       <View style={styles.subjectExerciseContainer}>
         <View style={styles.subjectContainer}>
