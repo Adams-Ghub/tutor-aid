@@ -8,6 +8,7 @@ import ParentTutors from '../screens/parent/parent-tutors';
 import Profile from '../screens/parent/parent-profile';
 import TutorDetails from '../screens/parent/tutor-details';
 import RequestForm from '../components/request-form';
+import ParentRequestDetails from '../screens/parent/parent-request-details';
 import { TouchableOpacity, View, Text, Image } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 import { Logout } from '../redux/users/usersAction.js';
@@ -57,6 +58,10 @@ const AllRequestsSubNavigation = () => {
       <Stack.Screen
         name="PRequests"        
         component={ParentRequests}
+      />
+      <Stack.Screen
+        name="PRequestDetails"        
+        component={ParentRequestDetails}
       />
       
     </Stack.Navigator>
