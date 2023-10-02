@@ -36,7 +36,7 @@ function ParentRequestItem({ info, distance }) {
       <View style={styles.dateStatusContainer}>
         <TouchableOpacity
           onPress={() =>
-            navigation.navigate('details', { data: { info, distance } })
+            navigation.navigate('PRequestDetails', { data: { info, distance } })
           }
         >
           <Text style={styles.detailsText}>details</Text>
