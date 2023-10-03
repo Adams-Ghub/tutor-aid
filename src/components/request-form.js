@@ -28,6 +28,7 @@ function RequestForm() {
   const [notes, setNotes] = useState(''); // Added Notes state
 
   const { user } = useSelector((state) => state.users);
+  const { message } = useSelector((state) => state.requests);
 
   const handleSubmit = () => {
     if (!user || !user.id) {
@@ -69,15 +70,14 @@ function RequestForm() {
       // You can display an error message or take appropriate action here
     } else {
       dispatch(MakeRequests(request));
-    
 
-    setWardOneClass('');
-    setWardOneName('');
-    setWardTwoClass('');
-    setWardTwoName('');
-    setWardThreeClass('');
-    setWardThreeName('');
-    setNotes('');
+      setWardOneClass('');
+      setWardOneName('');
+      setWardTwoClass('');
+      setWardTwoName('');
+      setWardThreeClass('');
+      setWardThreeName('');
+      setNotes('');
     }
   };
 
@@ -156,7 +156,11 @@ function RequestForm() {
           numberOfLines={10} // Optionally, you can set the number of lines to display
           textAlignVertical="top"
         />
-
+        {message === 'sending request...' ? (
+          <Text>{message}</Text>
+        ) : message === 'request sent successfully' ? (
+          Alert.alert('Message', 'request sent successfully')
+        ) : null}
         <TouchableOpacity style={styles.submitButton} onPress={handleSubmit}>
           <Text style={styles.submitButtonText}>Submit</Text>
         </TouchableOpacity>
