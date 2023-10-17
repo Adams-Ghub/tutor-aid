@@ -10,7 +10,7 @@ import {
 } from 'react-native';
 import { useRoute } from '@react-navigation/native';
 import { useDispatch, useSelector } from 'react-redux';
-import { AcceptRequest, listenToRequestUpdate } from '../../redux/requests/requestsActions';
+import { AcceptRequest, DeclineRequest, listenToRequestUpdate } from '../../redux/requests/requestsActions';
 import { acceptReqUpdate } from '../../redux/requests/requestsSlice';
 
 function RequestDetails() {
@@ -27,6 +27,13 @@ function RequestDetails() {
     dispatch(acceptReqUpdate(payload={ id: data.info.id, status }));
      
   };
+
+  const handleDecline = ()=>{
+    setStatus('declined');
+    const datum ={ id: data.info.id, status:'accepted' };
+    dispatch(DeclineRequest(datum))
+    dispatch(acceptReqUpdate(payload={ id: data.info.id, status }));
+  }
 
   useEffect(() => {
     const unsubscribe = dispatch(listenToRequestUpdate());
@@ -98,7 +105,7 @@ function RequestDetails() {
           <TouchableOpacity style={styles.submitButton} onPress={handleAccept}>
             <Text style={styles.submitButtonText}>Accept</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.submitButton}>
+          <TouchableOpacity style={styles.submitButton} onPress={handleDecline}>
             <Text style={styles.submitButtonText}>Decline</Text>
           </TouchableOpacity>
         </View>
