@@ -123,6 +123,23 @@ export const AcceptRequest = createAsyncThunk(
   }
 );
 
+export const DeclineRequest = createAsyncThunk(
+  'Approve',
+  async (datum, thunkAPI) => {
+    try {
+      const profile = doc(db, 'requests', datum.id);
+
+      await updateDoc(profile, {
+        status: datum.status,
+      });
+      console.log('datum',datum)
+    } catch (error) {
+      alert(error.message);
+      throw error;
+    }
+  }
+);
+
 //The listener Actions
 // const dispatch = useDispatch();
 export const listenToRequestUpdate = () => (dispatch) => {
