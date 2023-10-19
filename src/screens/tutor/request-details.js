@@ -30,7 +30,7 @@ function RequestDetails() {
 
   const handleDecline = ()=>{
     setStatus('declined');
-    const datum ={ id: data.info.id, status:'accepted' };
+    const datum ={ id: data.info.id, status:'declined' };
     dispatch(DeclineRequest(datum))
     dispatch(acceptReqUpdate(payload={ id: data.info.id, status }));
   }
