@@ -70,7 +70,7 @@ const TutorRequests = () => {
   let filtered= [];
   requests?filtered= requests.filter((request) => request.tutorId === user.id):null;
 
-console.log('requests:',requests)
+console.log('Filtered:',filtered)
 
   return (
     <View style={styles.mainContainer}>
