@@ -11,9 +11,12 @@ import {
 } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import SearchableDropdown from 'react-native-searchable-dropdown';
-import { useSelector,useDispatch } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { useEffect } from 'react';
-import { GetPerformances, listenToPerformanceChanges } from '../../redux/performances/performanceActions';
+import {
+  GetPerformances,
+  listenToPerformanceChanges,
+} from '../../redux/performances/performanceActions';
 
 const ParentPerformance = () => {
   const [tutor, setTutor] = useState('');
@@ -27,9 +30,9 @@ const ParentPerformance = () => {
   const [selectedSubject, setSelectedSubject] = useState('');
   const [image, setImage] = useState(null);
 
-  const { performances } = useSelector((state) => state.performances); 
-  const {user} =useSelector((state)=>state.users)
-  const dispatch = useDispatch()
+  const { performances } = useSelector((state) => state.performances);
+  const { user } = useSelector((state) => state.users);
+  const dispatch = useDispatch();
 
   // const parents = [
   //   {
@@ -42,17 +45,30 @@ const ParentPerformance = () => {
   //   },
   // ];
 
-  const parentPerformance=performances.filter(per=>per.parentId===user.id)
+  const parentPerformance = performances.filter(
+    (per) => per.parentId === user.id
+  );
   const tutorSelection = parentPerformance.map((performance) => ({
-    id: performance.tutor,
+    id: performance.tutorId,
     name: performance.tutor,
-  }))  
+  }));
 
-  
-useEffect(()=>{
-  dispatch(GetPerformances())
-  dispatch(listenToPerformanceChanges())
-},[])
+  const uniqueTutors = [];
+  const seenIds = {};
+
+  for (const tutor of tutorSelection) {
+    if (!seenIds[tutor.id]) {
+      uniqueTutors.push(tutor);
+      seenIds[tutor.id] = true;
+    }
+  }
+
+  console.log('performances:', parentPerformance);
+
+  useEffect(() => {
+    dispatch(GetPerformances());
+    dispatch(listenToPerformanceChanges());
+  }, []);
 
   const handleSelectTutor = (item) => {
     setSelectedTutor(item);
@@ -110,7 +126,7 @@ useEffect(()=>{
           itemStyle={styles.dropdownItem}
           itemTextStyle={styles.dropdownItemText}
           itemsContainerStyle={styles.dropdownItemsContainer}
-          items={tutorSelection}
+          items={uniqueTutors}
           placeholder={selectedTutor ? selectedTutor.name : ''}
           placeholderTextColor="#000"
           resetValue={false}
@@ -160,8 +176,6 @@ useEffect(()=>{
         value={selectedWard ? selectedWard.name : ''}
         textSearch={true}
       />
-
-  
 
       <Text style={styles.label}> Exercises and Tests </Text>
       <View style={styles.exercisesContainer}>
