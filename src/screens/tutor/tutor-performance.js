@@ -7,14 +7,17 @@ import {
   StyleSheet,
   TouchableOpacity,
   Image,
-Alert,
+  Alert,
   ScrollView,
 } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import * as Crypto from 'expo-crypto';
 import SearchableDropdown from 'react-native-searchable-dropdown';
 import { useSelector, useDispatch } from 'react-redux';
-import { AddPerformance } from '../../redux/performances/performanceActions';
+import {
+  AddPerformance,
+  GetPerformances,
+} from '../../redux/performances/performanceActions';
 
 const TutorPerformance = () => {
   const [parent, setParent] = useState('');
@@ -35,12 +38,12 @@ const TutorPerformance = () => {
 
   const handleSubmit = () => {
     const data = {
-      id: Crypto.randomUUID().slice(-12),
+      id: user.id.slice(0, 11) + selectedItem.id.slice(0, 11),
       tutor: user.fullName,
       tutorId: user.id,
-      parent: selectedItem.parent,
+      parent: selectedItem.name,
       parentId: selectedItem.id,
-      ward: selectedWard.student,
+      ward: selectedWard.name,
       wardId: Crypto.randomUUID().slice(-10),
       subject,
       exercise,
@@ -49,7 +52,7 @@ const TutorPerformance = () => {
       image,
     };
 
-    console.log('ward:', selectedWard);
+    console.log('PerformanceData:', data);
 
     if (
       selectedItem === '' ||
@@ -58,22 +61,36 @@ const TutorPerformance = () => {
       over === '' ||
       image === null
     ) {
-      Alert.alert('Error','all text fields must be filled');
+      Alert.alert('Error', 'all text fields must be filled');
     } else {
-      dispatch(AddPerformance(data));
-      performanceMsg === 'performance added successfully'
-        ? (setExercise(''),
-          setImage(''),
-          setMark(''),
-          setOver(''),
-          setSubject(''))
-        : null;
+      // dispatch(AddPerformance(data));
+      // performanceMsg === 'performance added successfully'
+      //   ? (setExercise(''),
+      //     setImage(''),
+      //     setMark(''),
+      //     setOver(''),
+      //     setSubject(''))
+      //   : null;
+      console.log('performanceId:', data.id);
     }
   };
 
-  useEffect(() => {}, [performanceMsg]);
+  useEffect(() => {
+    dispatch(GetPerformances());
+  }, []);
 
-  console.log('performance status:', performanceMsg);
+  const specificPerformance = [];
+
+  if (performance.length > 0 && selectedItem) {
+    performance.map((per) => {
+      if (per.id === user.id.slice(0, 11) + selectedItem.id.slice(0, 11)) {
+        specificPerformance.push(per);
+      }
+    });
+  }
+
+  console.log('performance status:', specificPerformance);
+
   const pickImage = async () => {
     // No permissions request is necessary for launching the image library
     let result = await ImagePicker.launchImageLibraryAsync({
@@ -101,6 +118,8 @@ const TutorPerformance = () => {
 
   const handleSelectItem = (item) => {
     setSelectedItem(item);
+    // const specifics = parents.filter((par) => par.parentId === selectedItem.id&&par.tutorId===user.id);
+    // console.log("Wards:",specifics[0].wards)
   };
 
   const handleSelectedWard = (item) => {
@@ -110,7 +129,7 @@ const TutorPerformance = () => {
   const getWards = () => {
     let wardSelection = [];
     parents.map((par) => {
-      if (par.parent === selectedItem.name) {
+      if (par.parentId === selectedItem.id&&par.tutorId===user.id) {
         par.wards.forEach((element) => {
           wardSelection.push({ id: element.student, name: element.student });
         });

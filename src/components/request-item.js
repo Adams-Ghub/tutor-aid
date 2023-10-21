@@ -10,12 +10,10 @@ function RequestItem({ info, distance }) {
   const dispatch = useDispatch();
 
   useEffect(() => {
-      dispatch(GetAllUsers());
-    },
-    []);
+    dispatch(GetAllUsers());
+  }, []);
 
-  const { user, allUsers } = useSelector((state) => state.users);
-  
+  const { user, allUsers } = useSelector((state) => state.users);  
   const parent = allUsers.filter(user=>user.id===info.parentId)
  
   return (
@@ -25,8 +23,15 @@ function RequestItem({ info, distance }) {
         <View style={styles.locationDistanceContainer}>
           <Text style={styles.locationDistanceText}>{info.location + ' '}</Text>
           <Text style={styles.locationDistanceText}>
-            {calculateDistance(user.lat, user.long, parent[0].lat,parent[0].long) +
-              ' km'}
+            {parent.length>0
+              ? calculateDistance(
+                  user.lat,
+                  user.long,
+                  parent[0].lat,
+                  parent[0].long
+                )
+              : "" + ' km'}
+
           </Text>
         </View>
       </View>
@@ -43,7 +48,18 @@ function RequestItem({ info, distance }) {
       <View style={styles.dateStatusContainer}>
         <TouchableOpacity
           onPress={() =>
-            navigation.navigate('details', { data: { info, distance:calculateDistance(user.lat, user.long, parent[0].lat,parent[0].long) } })
+            navigation.navigate('details', {
+              data: {
+                info,
+                distance: calculateDistance(
+                  user.lat,
+                  user.long,
+                  parent[0].lat,
+                  parent[0].long
+                ),
+              },
+            })
+
           }
         >
           <Text style={styles.detailsText}>details</Text>
