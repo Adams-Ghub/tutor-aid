@@ -23,7 +23,7 @@ const performanceSlice = createSlice({
   extraReducers: (builder) => {
     builder
       .addCase(AddPerformance.pending, (state) => {
-        state.performanceMsg = 'adding performance...';
+        state.performanceMsg = 'adding...';
         state.error = null;
       })
       .addCase(AddPerformance.fulfilled, (state) => {

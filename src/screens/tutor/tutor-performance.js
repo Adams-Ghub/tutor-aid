@@ -283,7 +283,9 @@ const TutorPerformance = () => {
       </View>
 
       <TouchableOpacity onPress={handleSubmit} style={styles.submitBtn}>
-        <Text style={styles.submitBtnText}>Submit</Text>
+       {
+        performanceMsg==="adding..."? <Text style={styles.submitBtnText}>adding...</Text>: <Text style={styles.submitBtnText}>Submit</Text>
+       }
       </TouchableOpacity>
     </View>
   );
