@@ -13,10 +13,9 @@ function RequestItem({ info, distance }) {
     dispatch(GetAllUsers());
   }, []);
 
-  const { user, allUsers } = useSelector((state) => state.users);
-
-  const parent = allUsers.filter((user) => user.id === info.parentId);
-
+  const { user, allUsers } = useSelector((state) => state.users);  
+  const parent = allUsers.filter(user=>user.id===info.parentId)
+ 
   return (
     <View style={styles.principalContainer}>
       <View style={styles.parentLocDistanceContainer}>
@@ -32,6 +31,7 @@ function RequestItem({ info, distance }) {
                   parent[0].long
                 )+ ' km'
               : "" + ' km'}
+
           </Text>
         </View>
       </View>
@@ -59,6 +59,7 @@ function RequestItem({ info, distance }) {
                 ),
               },
             })
+
           }
         >
           <Text style={styles.detailsText}>details</Text>
