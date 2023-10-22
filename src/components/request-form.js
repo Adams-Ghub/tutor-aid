@@ -99,12 +99,7 @@ function RequestForm() {
           editable={false}
           onChangeText={(text) => setTutorName(text)}
         />
-        <TextInput
-          style={styles.input}
-          placeholder="Enter your location"
-          value={tutorLocation}
-          onChangeText={(text) => setTutorLocation(text)}
-        />
+       
         <View style={styles.wardInfoContainer}>
           <TextInput
             style={styles.wardNameInput}
