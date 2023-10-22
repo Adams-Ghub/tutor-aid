@@ -29,7 +29,7 @@ function RequestItem({ info, distance }) {
                   user.long,
                   parent[0].lat,
                   parent[0].long
-                )
+                )+ ' km'
               : "" + ' km'}
 
           </Text>

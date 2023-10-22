@@ -15,6 +15,8 @@ import {
   updateDoc,
   onSnapshot,
   query,
+  arrayUnion,
+  arrayRemove,
 } from 'firebase/firestore';
 import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { auth, db } from '../../firebase/firebase.js';
@@ -55,49 +57,80 @@ export const AddPerformance = createAsyncThunk(
     const storage = getStorage();
     const imageRef = ref(
       storage,
-      `images/exercises/${data.id}_${data.wardId}_${data.subject}_${data.exercise.replace(
-        /\s+/g,
-        '_'
-      )}`
+      `images/exercises/${data.id}_${data.wardId}_${
+        data.subject
+      }_${data.exercise.replace(/\s+/g, '_')}`
     );
     try {
       const response = await fetch(data.image);
       const blob = await response.blob();
-  
+
       await uploadBytes(imageRef, blob);
-      console.log("Image uploaded successfully.");
-  
+      console.log('Image uploaded successfully.');
+
       // Get the download URL for the uploaded image
       const imageURL = await getDownloadURL(imageRef);
-      console.log("Download URL:", imageURL);
-  
+      console.log('Download URL:', imageURL);
+
       // You can return the URL for further use
-      await setDoc(doc(db, 'performances', data.id), {
-        id: data.id,
-        tutor: data.tutor,
-        tutorId: data.tutorId,
-        parent: data.parent,
-        parentId: data.parentId,
-        ward: [
-          {
-            name: data.ward,
-            id:data.wardId,
-            subjects: [
+      if (data.status === true) {
+        const docRef = doc(db, 'performances', data.id);
+
+        // Get the document
+        const docSnapshot = await getDoc(docRef);
+        if (docSnapshot.exists()) {
+          // Retrieve the data
+          const docData = docSnapshot.data();
+
+          const newSubject = {
+            name: data.subject,
+            exercises: [
               {
-                name: data.subject,
-                exercises: [
-                  {
-                    exercise: data.exercise,
-                    mark: data.mark,
-                    of: data.over,
-                    image: imageURL,
-                  },
-                ],
+                exercise: data.exercise,
+                mark: data.mark,
+                of: data.of,
+                image: data.imageURL,
               },
             ],
-          },
-        ],
-      });
+          };
+
+          docData.ward[0].subjects.push(newSubject); // Modify the first ward's subjects array
+
+          // Update the Firestore document with the modified data
+          await updateDoc(docRef, {
+            ward: docData.ward,
+          });
+
+          console.log('Document successfully updated!');
+        }
+      } else {
+        await setDoc(doc(db, 'performances', data.id), {
+          id: data.id,
+          tutor: data.tutor,
+          tutorId: data.tutorId,
+          parent: data.parent,
+          parentId: data.parentId,
+          ward: [
+            {
+              name: data.ward,
+              id: data.wardId,
+              subjects: [
+                {
+                  name: data.subject,
+                  exercises: [
+                    {
+                      exercise: data.exercise,
+                      mark: data.mark,
+                      of: data.over,
+                      image: imageURL,
+                    },
+                  ],
+                },
+              ],
+            },
+          ],
+        });
+      }
     } catch (error) {
       thunkAPI.rejectWithValue(error);
       alert(error.message);

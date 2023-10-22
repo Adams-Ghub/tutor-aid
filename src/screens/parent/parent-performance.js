@@ -17,6 +17,7 @@ import {
   GetPerformances,
   listenToPerformanceChanges,
 } from '../../redux/performances/performanceActions';
+import { useNavigation } from '@react-navigation/native';
 
 const ParentPerformance = () => {
   const [tutor, setTutor] = useState('');
@@ -33,6 +34,7 @@ const ParentPerformance = () => {
   const { performances } = useSelector((state) => state.performances);
   const { user } = useSelector((state) => state.users);
   const dispatch = useDispatch();
+  const navigation = useNavigation();
 
   // const parents = [
   //   {
@@ -114,6 +116,7 @@ const ParentPerformance = () => {
     return Exercise;
   };
 
+  console.log('selecteSubject:', selectedSubject);
   return (
     <View style={styles.container}>
       <View>
@@ -181,7 +184,16 @@ const ParentPerformance = () => {
       <View style={styles.exercisesContainer}>
         {getExercises().map((exercise) => {
           return (
-            <TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => {
+                navigation.navigate('PerformanceDetails', {
+                  data: exercise,
+                  tutor: selectedTutor.name,
+                  ward: selectedWard.name,
+                  subject: selectedSubject.name,
+                });
+              }}
+            >
               <ExerciseComponent Exercise={exercise.exercise} />
             </TouchableOpacity>
           );

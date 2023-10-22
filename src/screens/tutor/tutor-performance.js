@@ -17,7 +17,9 @@ import { useSelector, useDispatch } from 'react-redux';
 import {
   AddPerformance,
   GetPerformances,
+  listenToPerformanceChanges
 } from '../../redux/performances/performanceActions';
+
 
 const TutorPerformance = () => {
   const [parent, setParent] = useState('');
@@ -37,47 +39,69 @@ const TutorPerformance = () => {
   );
 
   const handleSubmit = () => {
-    const data = {
-      id: user.id.slice(0, 11) + selectedItem.id.slice(0, 11),
-      tutor: user.fullName,
-      tutorId: user.id,
-      parent: selectedItem.name,
-      parentId: selectedItem.id,
-      ward: selectedWard.name,
-      wardId: Crypto.randomUUID().slice(-10),
-      subject,
-      exercise,
-      mark,
-      over,
-      image,
-    };
-
-    console.log('PerformanceData:', data);
-
-    if (
-      selectedItem === '' ||
-      selectedWard === '' ||
-      mark === '' ||
-      over === '' ||
-      image === null
-    ) {
-      Alert.alert('Error', 'all text fields must be filled');
+    let data;
+    if (getWardPerformance(selectedWard).status === true) {
+      const performance = getWardPerformance(selectedWard).performance;
+      data = {
+        id: user.id.slice(0, 11) + selectedItem.id.slice(0, 11),
+        tutor: user.fullName,
+        tutorId: user.id,
+        parent: selectedItem.name,
+        parentId: selectedItem.id,
+        ward: selectedWard.name,
+        wardId: performance.wardId,
+        subject,
+        exercise,
+        mark,
+        over,
+        image,
+        status: true,
+      };
     } else {
-      // dispatch(AddPerformance(data));
-      // performanceMsg === 'performance added successfully'
-      //   ? (setExercise(''),
-      //     setImage(''),
-      //     setMark(''),
-      //     setOver(''),
-      //     setSubject(''))
-      //   : null;
-      console.log('performanceId:', data.id);
+      data = {
+        id: user.id.slice(0, 11) + selectedItem.id.slice(0, 11),
+        tutor: user.fullName,
+        tutorId: user.id,
+        parent: selectedItem.name,
+        parentId: selectedItem.id,
+        ward: selectedWard.name,
+        wardId: Crypto.randomUUID().slice(-10),
+        subject,
+        exercise,
+        mark,
+        over,
+        image,
+        status: false,
+      };
+
+      console.log('PerformanceData:', data);
+
+      if (
+        selectedItem === '' ||
+        selectedWard === '' ||
+        mark === '' ||
+        over === '' ||
+        image === null
+      ) {
+        Alert.alert('Error', 'all text fields must be filled');
+      } else {
+        dispatch(AddPerformance(data));
+        performanceMsg === 'performance added successfully'
+          ? (setExercise(''),
+            setImage(''),
+            setMark(''),
+            setOver(''),
+            setSubject(''))
+          : null;
+        console.log('performanceId:', data.id);
+      }
     }
   };
-
   useEffect(() => {
     dispatch(GetPerformances());
+    dispatch(listenToPerformanceChanges());
   }, []);
+
 
   const specificPerformance = [];
 
@@ -89,8 +113,42 @@ const TutorPerformance = () => {
     });
   }
 
-  console.log('performance status:', specificPerformance);
+  const getSpecificPerformance = (id) => {
+    const specificPerformance = [];
+    if (performances.length > 0 && selectedItem) {
+      performances.map((per) => {
+        if (per.id === id) {
+          specificPerformance.push(per);
+        }
+      });
+    }
+    return specificPerformance;
+  };
 
+  const getWardPerformance = (ward) => {
+    const performance = getSpecificPerformance(
+      user.id.slice(0, 11) + selectedItem.id.slice(0, 11)
+    );
+    console.log("getWardPerFuncition:",performance)
+    let result;
+    if (performance.length === 0) {
+      result = { status: false, performance: null };
+    } else {
+      const theWard = performance[0].ward.filter((child) => child.name === ward);
+      theWard.length === 0
+        ? (result = { status: false, performance: null })
+        : (result = { status: true, performance: theWard });
+    }
+
+    return result;
+  };
+
+  if(selectedWard){
+
+    console.log('getWardPerformance:', getWardPerformance(selectedWard.name));
+  }
+
+ 
   const pickImage = async () => {
     // No permissions request is necessary for launching the image library
     let result = await ImagePicker.launchImageLibraryAsync({
@@ -129,7 +187,7 @@ const TutorPerformance = () => {
   const getWards = () => {
     let wardSelection = [];
     parents.map((par) => {
-      if (par.parentId === selectedItem.id&&par.tutorId===user.id) {
+      if (par.parentId === selectedItem.id && par.tutorId === user.id) {
         par.wards.forEach((element) => {
           wardSelection.push({ id: element.student, name: element.student });
         });

@@ -4,6 +4,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { DrawerActions } from '@react-navigation/native';
 import DrawerItem from '../components/drawer-item';
 import Performance from '../screens/parent/parent-performance';
+import PerformanceDetails from '../screens/parent/performance-details';
 import ParentTutors from '../screens/parent/parent-tutors';
 import Profile from '../screens/parent/parent-profile';
 import TutorDetails from '../screens/parent/tutor-details';
@@ -14,7 +15,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Logout } from '../redux/users/usersAction.js';
 import {
   Entypo,
-  Ionicons ,
+  Ionicons,
   EvilIcons,
   FontAwesome5,
   AntDesign,
@@ -32,18 +33,22 @@ const AllTutorSubNavigation = () => {
       }}
       initialRouteName="PTutors"
     >
-      <Stack.Screen
-        name="PTutors"        
-        component={ParentTutors}
-      />
-      <Stack.Screen
-        name="TutorDetails" 
-        component={TutorDetails}
-      />
-      <Stack.Screen
-        name="RequestForm"
-        component={RequestForm}
-      />
+      <Stack.Screen name="PTutors" component={ParentTutors} />
+      <Stack.Screen name="TutorDetails" component={TutorDetails} />
+      <Stack.Screen name="RequestForm" component={RequestForm} />
+    </Stack.Navigator>
+  );
+};
+const AllPerformanceSubNavigation = () => {
+  return (
+    <Stack.Navigator
+      screenOptions={{
+        header: () => null,
+      }}
+      initialRouteName="Performance"
+    >
+      <Stack.Screen name="Performance" component={Performance} />
+      <Stack.Screen name="PerformanceDetails" component={PerformanceDetails} />
     </Stack.Navigator>
   );
 };
@@ -55,15 +60,8 @@ const AllRequestsSubNavigation = () => {
       }}
       initialRouteName="PRequests"
     >
-      <Stack.Screen
-        name="PRequests"        
-        component={ParentRequests}
-      />
-      <Stack.Screen
-        name="PRequestDetails"        
-        component={ParentRequestDetails}
-      />
-      
+      <Stack.Screen name="PRequests" component={ParentRequests} />
+      <Stack.Screen name="PRequestDetails" component={ParentRequestDetails} />
     </Stack.Navigator>
   );
 };
@@ -85,7 +83,7 @@ function ParentNavigation({ navigation }) {
   //   [loginMsg]
   // );
 
-  const displayName = loginMsg==="fulfilled" ? user.fullName.split(' ') : '';
+  const displayName = loginMsg === 'fulfilled' ? user.fullName.split(' ') : '';
 
   return (
     <Drawer.Navigator
@@ -146,7 +144,7 @@ function ParentNavigation({ navigation }) {
           backgroundColor: '#ddd',
           height: 70,
           borderBottomWidth: 2,
-          borderBottomColor: '#3944bc'
+          borderBottomColor: '#3944bc',
         },
         headerTitleContainerStyle: {
           top: 0, // Adjust the top position to align with the drawer content
@@ -167,12 +165,7 @@ function ParentNavigation({ navigation }) {
             return (
               <DrawerItem
                 icon={
-                  <Ionicons 
-                    name="school"
-                    style={{}}
-                    size={16}
-                    color="#fff"
-                  />
+                  <Ionicons name="school" style={{}} size={16} color="#fff" />
                 }
                 title="Tutors"
               />
@@ -207,20 +200,15 @@ function ParentNavigation({ navigation }) {
           },
         }}
       />
-       <Drawer.Screen
-        name="Performance"
-        component={Performance}
+      <Drawer.Screen
+        name="Performances"
+        component={AllPerformanceSubNavigation}
         options={{
           drawerLabel: () => {
             return (
               <DrawerItem
                 icon={
-                  <EvilIcons
-                    name="chart"
-                    style={{}}
-                    size={16}
-                    color="#fff"
-                  />
+                  <EvilIcons name="chart" style={{}} size={16} color="#fff" />
                 }
                 title="Performance"
               />
@@ -239,12 +227,7 @@ function ParentNavigation({ navigation }) {
             return (
               <DrawerItem
                 icon={
-                  <AntDesign
-                    name="user"
-                    style={{}}
-                    size={16}
-                    color="#fff"
-                  />
+                  <AntDesign name="user" style={{}} size={16} color="#fff" />
                 }
                 title="Profile"
               />
@@ -255,7 +238,6 @@ function ParentNavigation({ navigation }) {
           },
         }}
       />
-     
 
       {/* <Drawer.Screen name="AddPrescription" component={AddPrescriptionScreen} /> */}
     </Drawer.Navigator>
