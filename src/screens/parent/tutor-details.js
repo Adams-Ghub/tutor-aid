@@ -4,6 +4,7 @@ import InfoHeader from './info-header';
 import { useRoute } from '@react-navigation/native';
 import { useSelector } from 'react-redux';
 import { calculateDistance } from '../../components/distance-calculator';
+import { Linking } from 'expo';
 
 function TutorDetails({ navigation }) {
   const tutor = {
@@ -19,6 +20,24 @@ function TutorDetails({ navigation }) {
 
   const info = useRoute().params.info;
   const { user } = useSelector((state) => state.users);
+  
+  
+  const openResumeLink = async (url) => {
+    try {
+      const supported = await Linking.canOpenURL(url);
+  
+      if (supported) {
+        await Linking.openURL(url);
+      } else {
+        console.error('Cannot open URL: ' + url);
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
+  
+
+
 
   return (
     <View style={styles.container}>
@@ -37,6 +56,7 @@ function TutorDetails({ navigation }) {
 
         <View style={styles.infoItem}>
           <Text style={styles.label}>Subjects:</Text>
+          
           <Text style={styles.value}>{info.profile.subjects}</Text>
         </View>
 
@@ -47,7 +67,9 @@ function TutorDetails({ navigation }) {
 
         <View style={styles.infoItem}>
           <Text style={styles.label}>Resume link:</Text>
-          <Text style={styles.link}>{info.profile.resume}</Text>
+          <TouchableOpacity onPress={()=>{openResumeLink(info.profile.resume)}}>
+          <Text style={styles.link}>Resume Link</Text>
+          </TouchableOpacity>
         </View>
         <View style={styles.infoItem}>
           <Text style={styles.label}>Rate per month:</Text>
