@@ -13,6 +13,7 @@ import { useRoute } from '@react-navigation/native';
 import { useDispatch } from 'react-redux';
 import { approval } from '../../redux/users/usersSlice';
 import { ApproveTutor, listenToProfileUpdate } from '../../redux/users/usersAction';
+import {Linking} from expo;
 
 function ProfileDetails() {
   const tutor = {
@@ -54,6 +55,20 @@ function ProfileDetails() {
     };
   }, [dispatch]);
 
+  const openResumeLink = async (url) => {
+    try {
+      const supported = await Linking.canOpenURL(url);
+  
+      if (supported) {
+        await Linking.openURL(url);
+      } else {
+        console.error('Cannot open URL: ' + url);
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   return (
     <View style={styles.container}>
       <Text style={styles.header}>Professional Info</Text>
@@ -81,7 +96,9 @@ function ProfileDetails() {
 
         <View style={styles.infoItem}>
           <Text style={styles.label}>Resume link:</Text>
-          <Text style={styles.link}>{data.profile.resume}</Text>
+          <TouchableOpacity onPress={()=>{openResumeLink(data.profile.resume)}}>
+          <Text style={styles.link}>Resume </Text>
+          </TouchableOpacity>
         </View>
         <View style={styles.infoItem}>
           <Text style={styles.label}>Rate per month:</Text>
