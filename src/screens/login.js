@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   View,
   Alert,
+  Dimensions
 } from 'react-native';
 import { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -29,9 +30,9 @@ export default function Login({ navigation }) {
     }
   };
 
-  const handleModalClose = () => {
-    setModalVisible(false);
-  };
+  // const handleModalClose = () => {
+  //   setModalVisible(false);
+  // };
 
   const { loginMsg } = useSelector((state) => state.users);
 
@@ -86,7 +87,7 @@ export default function Login({ navigation }) {
             style={styles.loginButton}
             onPress={() => handleLogin()}
           >
-            <Text style={styles.loginButtonText}>Login</Text>
+            <Text style={styles.loginButtonText}>Login</Text>+
           </TouchableOpacity>
         </View>
         <View style={styles.forgotPasswordTextContainer}>
@@ -119,6 +120,11 @@ export default function Login({ navigation }) {
   );
 }
 
+const { width, height } = Dimensions.get('window');
+
+const responsiveFontSize = (size) => (width / 375) * size;
+const responsiveMargin = (margin) => (width / 375) * margin;
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -139,7 +145,7 @@ const styles = StyleSheet.create({
   },
   headingText: {
     alignSelf: 'center',
-    fontSize: 35,
+    fontSize: responsiveFontSize(35),
     color: '#fff',
     fontWeight: '300',
   },
@@ -157,16 +163,17 @@ const styles = StyleSheet.create({
     marginBottom: 30,
   },
   emailText: {
-    fontSize: 15,
+    fontSize: responsiveFontSize(15),
     fontWeight: '600',
     color: '#565656',
-    paddingLeft: 10,
-    marginBottom: 16,
+    paddingLeft: responsiveMargin(10),
+    marginBottom: responsiveMargin(16),
   },
+
   emailInput: {
-    paddingLeft: 10,
+    paddingLeft: responsiveMargin(10),
     color: '#050505',
-    fontSize: 18,
+    fontSize: responsiveFontSize(18),
   },
   passwordLabelInputContainer: {
     borderStyle: 'solid',
@@ -175,16 +182,17 @@ const styles = StyleSheet.create({
     marginBottom: 30,
   },
   passwordText: {
-    fontSize: 15,
+    fontSize: responsiveFontSize(15),
     fontWeight: '600',
     color: '#565656',
-    paddingLeft: 10,
-    marginBottom: 16,
+    paddingLeft: responsiveMargin(10),
+    marginBottom: responsiveMargin(16),
   },
+
   passwordInput: {
-    paddingLeft: 10,
+    paddingLeft: responsiveMargin(10),
     color: '#050505',
-    fontSize: 18,
+    fontSize: responsiveFontSize(18),
     width: '90%',
   },
   loginMsg: {
@@ -199,17 +207,18 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    borderRadius: 5,
+    borderRadius: responsiveMargin(5),
   },
+
   loginButtonText: {
     color: '#fefefe',
-    paddingVertical: 12,
-    fontSize: 18,
+    paddingVertical: responsiveMargin(12),
+    fontSize: responsiveFontSize(18),
     fontWeight: '600',
   },
   forgotPasswordTextContainer: {
-    marginTop: 15,
-    marginBottom: 40,
+    marginTop: responsiveMargin(15),
+    marginBottom: responsiveMargin(40),
   },
   forgotPasswordTextClickable: {
     flex: 1,
