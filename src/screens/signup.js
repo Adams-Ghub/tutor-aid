@@ -8,7 +8,8 @@ import {
   TextInput,
   TouchableOpacity,
   View,
-  Alert
+  Alert,
+  Dimensions,
 } from 'react-native';
 import { RegisterUser } from '../redux/users/usersAction';
 import { MaterialIcons } from '@expo/vector-icons';
@@ -157,6 +158,9 @@ export default function Signup({ navigation }) {
   );
 }
 
+const windowWidth = Dimensions.get('window').width;
+const windowHeight = Dimensions.get('window').height;
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -176,16 +180,15 @@ const styles = StyleSheet.create({
   },
   headingText: {
     alignSelf: 'center',
-    fontSize: 35,
     color: '#fefefe',
     fontWeight: '300',
+    fontSize: windowWidth * 0.07,
   },
   bottomSection: {
     flex: 0.5,
     backgroundColor: '#fff',
-
-    paddingTop: 40,
-    paddingHorizontal: 20,
+    paddingTop: windowHeight * 0.04, // Responsive padding
+    paddingHorizontal: windowWidth * 0.05,
   },
   emailLabelInputContainer: {
     borderStyle: 'solid',
