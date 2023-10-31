@@ -83,7 +83,7 @@ export default function Login({ navigation }) {
             style={styles.loginButton}
             onPress={() => handleLogin()}
           >
-            <Text style={styles.loginButtonText}>Login</Text>+
+            <Text style={styles.loginButtonText}>Login</Text>
           </TouchableOpacity>
         </View>
         <View style={styles.forgotPasswordTextContainer}>
