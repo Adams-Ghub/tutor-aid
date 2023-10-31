@@ -13,7 +13,7 @@ import { useRoute } from '@react-navigation/native';
 import { useDispatch } from 'react-redux';
 import { approval } from '../../redux/users/usersSlice';
 import { ApproveTutor, listenToProfileUpdate } from '../../redux/users/usersAction';
-import {Linking} from expo;
+import {Linking} from "expo";
 
 function ProfileDetails() {
   const tutor = {
