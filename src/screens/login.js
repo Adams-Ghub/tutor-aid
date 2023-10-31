@@ -30,10 +30,6 @@ export default function Login({ navigation }) {
     }
   };
 
-  // const handleModalClose = () => {
-  //   setModalVisible(false);
-  // };
-
   const { loginMsg } = useSelector((state) => state.users);
 
   return (
@@ -110,7 +106,7 @@ export default function Login({ navigation }) {
           <Text style={styles.modalText}>User signed up successfully!</Text>
           <TouchableOpacity
             style={styles.modalButton}
-            onPress={handleModalClose}
+        
           >
             <Text style={styles.modalButtonText}>OK</Text>
           </TouchableOpacity>
