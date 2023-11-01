@@ -7,6 +7,7 @@ import {
   Text,
   TouchableOpacity,
   StyleSheet,
+  Dimensions,
   Image,
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
@@ -209,6 +210,9 @@ function TutorProfileOne() {
   );
 }
 
+const windowWidth = Dimensions.get('window').width;
+const windowHeight = Dimensions.get('window').height;
+
 const styles = StyleSheet.create({
   mainContainer: {
     flex: 1,
@@ -220,10 +224,10 @@ const styles = StyleSheet.create({
   imageMajorContainer: {
     flex: 0.45,
     width: '100%',
-    marginTop: 10,
+    marginTop: windowHeight * 0.02,
   },
   selectImgText: {
-    fontSize: 20,
+    fontSize: 0.04 * windowWidth, // Responsive font size
     position: 'relative',
     top: '40%',
     alignSelf: 'center',
@@ -236,6 +240,11 @@ const styles = StyleSheet.create({
     height: '100%',
     marginVertical: 0,
     paddingVertical: 0,
+  },
+  profileImage: {
+    width: '100%',
+    height: '100%',
+    alignSelf: 'center',
   },
   bottomSection: {
     flex: 0.5,
