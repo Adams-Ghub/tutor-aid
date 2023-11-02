@@ -1,12 +1,15 @@
+
+
+
 import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, ScrollView, Dimensions } from 'react-native';
 import InfoHeader from './info-header';
 import { useRoute } from '@react-navigation/native';
 import { useSelector } from 'react-redux';
 import { calculateDistance } from '../../components/distance-calculator';
 import { Linking } from 'expo';
 
-function TutorDetails({ navigation }) {
+const TutorDetails = ({ navigation }) => {
   const tutor = {
     fullName: 'Samuel Boadu',
     location: 'Kasoa',
@@ -20,12 +23,11 @@ function TutorDetails({ navigation }) {
 
   const info = useRoute().params.info;
   const { user } = useSelector((state) => state.users);
-  
-  
+
   const openResumeLink = async (url) => {
     try {
       const supported = await Linking.canOpenURL(url);
-  
+
       if (supported) {
         await Linking.openURL(url);
       } else {
@@ -35,12 +37,9 @@ function TutorDetails({ navigation }) {
       console.error(error);
     }
   };
-  
-
-
 
   return (
-    <View style={styles.container}>
+    <ScrollView style={styles.container}>
       <Text style={styles.header}>Professional Info</Text>
       <View style={styles.headerContainer}>
         <InfoHeader
@@ -56,7 +55,6 @@ function TutorDetails({ navigation }) {
 
         <View style={styles.infoItem}>
           <Text style={styles.label}>Subjects:</Text>
-          
           <Text style={styles.value}>{info.profile.subjects}</Text>
         </View>
 
@@ -67,8 +65,8 @@ function TutorDetails({ navigation }) {
 
         <View style={styles.infoItem}>
           <Text style={styles.label}>Resume link:</Text>
-          <TouchableOpacity onPress={()=>{openResumeLink(info.profile.resume)}}>
-          <Text style={styles.link}>Resume Link</Text>
+          <TouchableOpacity onPress={() => { openResumeLink(info.profile.resume) }}>
+            <Text style={styles.link}>Resume Link</Text>
           </TouchableOpacity>
         </View>
         <View style={styles.infoItem}>
@@ -87,9 +85,11 @@ function TutorDetails({ navigation }) {
           <Text style={styles.requestButtonText}>Request</Text>
         </TouchableOpacity>
       </View>
-    </View>
+    </ScrollView>
   );
 }
+
+const { width, height } = Dimensions.get('window');
 
 const styles = StyleSheet.create({
   container: {
@@ -107,25 +107,15 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     padding: 15,
     elevation: 3,
-    flex: 1, // Occupy all available vertical space
   },
   infoItem: {
-    flexDirection: 'column',
-    alignItems: 'center',
-    justifyContent: 'flex-start',
-    alignSelf: 'flex-start',
     marginBottom: 18,
-    width: '100%',
   },
   profSummarySection: {
-    flexDirection: 'column',
-    alignItems: 'flex-start',
-    justifyContent: 'flex-start',
     marginTop: 18,
     marginBottom: 10,
   },
   headerContainer: {
-    shadowColor: '#000',
     borderWidth: 2,
     borderColor: '#ddd',
     borderRadius: 10,
@@ -133,14 +123,10 @@ const styles = StyleSheet.create({
   label: {
     fontSize: 16,
     fontWeight: 'bold',
-    borderStyle: 'solid',
-    borderBottomWidth: 1,
-    borderBlockColor: '#333333',
     width: '100%',
   },
   value: {
     fontSize: 16,
-    alignSelf: 'flex-start',
   },
   link: {
     color: 'blue',
@@ -151,15 +137,13 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     alignItems: 'center',
     paddingVertical: 5,
-    marginTop: 10, // Reduce the spacing between the button and the previous item
-    alignSelf: 'flex-start', // Align the button to the left
-    width: '25%', // Reduce the width of the button
-    alignSelf: 'center', // Align the button to the
+    marginTop: 10,
+    width: width * 0.25,
+    alignSelf: 'center',
   },
   requestButtonText: {
     color: 'white',
     fontSize: 15,
-    fontWeight: 'normal',
   },
 });
 
