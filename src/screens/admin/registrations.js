@@ -36,29 +36,7 @@ const Registrations = () => {
   console.log("tutors", userTutors)
 
   const navigation = useNavigation();
-  const tutors = [
-    {
-      name: 'Samuel Boadu',
-      location: 'Bortianor',
-      distance:17.2,
-      profile: {
-        experience: 5,
-        contact: '+233 555 788590',
-        resume: 'http://localhost/resume',
-      },
-    },
-    {
-      name: 'Vivian Baidoo',
-      location: 'Sprintex',
-      distance:39.3,
-      profile: {
-        experience: 3,
-        contact: '+233 546 789590',
-        resume: 'http://localhost/resume',
-      },
-    },
-  ];
-
+  
   const handlePressDetails = (details) => {
     navigation.navigate(details);
   };
