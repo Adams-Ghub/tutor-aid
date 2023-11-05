@@ -36,17 +36,6 @@ const ParentPerformance = () => {
   const dispatch = useDispatch();
   const navigation = useNavigation();
 
-  // const parents = [
-  //   {
-  //     name: 'John Kinsgton',
-  //     ward: [{ name: 'Ama Kingston' }, { name: 'Kofi Kignston' }],
-  //   },
-  //   {
-  //     name: 'John Appiah',
-  //     ward: [{ name: 'Ama Appiah' }, { name: 'Kofi Appiah' }],
-  //   },
-  // ];
-
   const parentPerformance = performances.filter(
     (per) => per.parentId === user.id
   );
