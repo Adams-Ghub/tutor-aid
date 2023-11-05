@@ -79,7 +79,7 @@ function ParentProfile() {
       setLat(latitude);
     } catch (error) {
       alert('Error getting coordinates', error);
-      console.log("getCoord:",error)
+     
     }
   };
 
