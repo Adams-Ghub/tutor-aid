@@ -33,8 +33,6 @@ const Registrations = () => {
   const Tutors=allUsers
   const userTutors=Tutors.filter((tutor)=>tutor.role==='tutor');
 
-  console.log("tutors", userTutors)
-
   const navigation = useNavigation();
   
   const handlePressDetails = (details) => {
