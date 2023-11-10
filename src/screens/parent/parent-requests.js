@@ -77,9 +77,6 @@ const styles = StyleSheet.create({
     marginHorizontal: 20,
     justifyContent: 'flex-start',
     alignItems: 'stretch',
-
-    // width: '90%',
-    // backgroundColor: '#222',
   },
   heading: {
     fontSize: 20,
