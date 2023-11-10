@@ -176,8 +176,6 @@ const TutorPerformance = () => {
 
   const handleSelectItem = (item) => {
     setSelectedItem(item);
-    // const specifics = parents.filter((par) => par.parentId === selectedItem.id&&par.tutorId===user.id);
-    // console.log("Wards:",specifics[0].wards)
   };
 
   const handleSelectedWard = (item) => {
